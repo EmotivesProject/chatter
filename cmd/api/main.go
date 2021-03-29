@@ -19,5 +19,7 @@ func main() {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
 
+	go api.HandleMessages()
+
 	log.Fatal(http.ListenAndServe(host+":"+port, router))
 }

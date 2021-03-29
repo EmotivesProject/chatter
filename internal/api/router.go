@@ -13,5 +13,9 @@ func CreateRouter() chi.Router {
 		r.Get("/healthz", healthz)
 	})
 
+	r.Route("/ws", func(r chi.Router) {
+		r.Get("/", handleConnections)
+	})
+
 	return r
 }
