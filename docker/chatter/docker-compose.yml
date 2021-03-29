@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: ../../.
+      dockerfile: docker/chatter/Dockerfile
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ../../:/app
+    environment:
+      - BASE_HOST=http://
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.chatter.rule=Host(`chatter.localhost`)"
+      - "traefik.http.routers.chatter.entrypoints=web"
+      - "traefik.docker.network=traefik"
+    restart: unless-stopped
+    networks:
+      traefik:
+      default:
+      emotives:
+        aliases:
+          - chatter
+
+networks:
+  emotives:
+    external:
+      name: emotives
+  default:
+  traefik:
+    external:
+      name: traefik
