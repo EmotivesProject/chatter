@@ -1,11 +1,16 @@
 package api
 
 import (
+	"chatter/internal/auth"
+	"chatter/internal/db"
 	"chatter/model"
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 
+	"github.com/gocql/gocql"
 	"github.com/gorilla/websocket"
 )
 
@@ -23,13 +28,48 @@ var (
 			return true
 		},
 	}
+
+	session = db.Init()
 )
 
 func healthz(w http.ResponseWriter, r *http.Request) {
 	messageResponseJSON(w, http.StatusOK, model.Message{Message: msgHealthOK})
 }
 
+func createTocken(w http.ResponseWriter, r *http.Request) {
+	token := auth.CreateToken()
+	resultResponseJSON(w, http.StatusOK, token)
+}
+
+func createUser(w http.ResponseWriter, r *http.Request) {
+	user := &model.ShortenedUser{}
+	err := json.NewDecoder(r.Body).Decode(user)
+	if err != nil {
+		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: "fail"})
+		return
+	}
+
+	user.ID = gocql.TimeUUID()
+
+	err = session.Query("INSERT into users(id, name, username) values (?, ?, ?);", user.ID, user.Name, user.Username).Exec()
+	if err != nil {
+		fmt.Println("Failed creating new user")
+		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: "fail"})
+		return
+	}
+
+	fmt.Println("Created new user")
+
+	resultResponseJSON(w, http.StatusOK, user)
+}
+
 func handleConnections(w http.ResponseWriter, r *http.Request) {
+	token := r.URL.Query().Get("token")
+	if token == "" {
+		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: "not auth"})
+		return
+	}
+
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Fatal(err)

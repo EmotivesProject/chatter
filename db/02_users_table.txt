@@ -1,0 +1,6 @@
+CREATE TABLE users(
+   id uuid PRIMARY KEY,
+   name text,
+   username text,
+   user_token uuid
+);

@@ -23,6 +23,23 @@ services:
         aliases:
           - chatter
 
+  cassandra:
+    image: cassandra:latest
+    hostname: cassandra-server
+    ports:
+      - 9042:9042
+    environment:
+      - "MAX_HEAP_SIZE=256M"
+      - "HEAP_NEWSIZE=128M"
+    restart: always
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+    networks:
+      default:
+
+volumes:
+  cassandra_data:
+
 networks:
   emotives:
     external:
