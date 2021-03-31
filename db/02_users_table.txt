@@ -4,3 +4,7 @@ CREATE TABLE users(
    username text,
    user_token uuid
 );
+
+create index on users(username);
+
+create index on users(user_token);

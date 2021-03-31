@@ -37,7 +37,12 @@ func healthz(w http.ResponseWriter, r *http.Request) {
 }
 
 func createTocken(w http.ResponseWriter, r *http.Request) {
-	token := auth.CreateToken()
+	username := r.Context().Value(userID)
+	token, err := auth.CreateToken(fmt.Sprintf("%v", username), session)
+	if err != nil {
+		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
+		return
+	}
 	resultResponseJSON(w, http.StatusOK, token)
 }
 
@@ -45,7 +50,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 	user := &model.ShortenedUser{}
 	err := json.NewDecoder(r.Body).Decode(user)
 	if err != nil {
-		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: "fail"})
+		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
 		return
 	}
 
@@ -69,6 +74,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: "not auth"})
 		return
 	}
+	fmt.Println(token)
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {

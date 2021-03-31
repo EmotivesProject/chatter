@@ -12,8 +12,6 @@ func resultResponseJSON(w http.ResponseWriter, status int, result interface{}) {
 		Result: result,
 	}
 
-	fmt.Printf("%+v\n", result)
-
 	responseJSON(w, status, response)
 }
 
