@@ -70,11 +70,11 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
 	token := r.URL.Query().Get("token")
-	if token == "" {
+	_, err := auth.ValidateToken(token, session)
+	if err != nil {
 		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: "not auth"})
 		return
 	}
-	fmt.Println(token)
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
