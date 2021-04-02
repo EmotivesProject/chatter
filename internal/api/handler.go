@@ -69,8 +69,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
-	token := r.URL.Query().Get("token")
-	_, err := auth.ValidateToken(token, session)
+	_, err := auth.ValidateToken(r.URL.Query().Get("token"), session)
 	if err != nil {
 		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: "not auth"})
 		return
@@ -78,7 +77,9 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Error")
+		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
+		return
 	}
 	// ensure connection close when function returns
 	defer ws.Close()
