@@ -3,12 +3,14 @@ package api
 import (
 	"chatter/internal/auth"
 	"chatter/internal/db"
+	"chatter/internal/messages"
 	"chatter/model"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/gocql/gocql"
 	"github.com/gorilla/websocket"
@@ -20,8 +22,9 @@ type ChatMessage struct {
 }
 
 var (
-	msgHealthOK = "Health ok"
-	clients     = make(map[*websocket.Conn]bool)
+	mapMuxtex   = sync.RWMutex{}
+	connections = make(map[*websocket.Conn]string)
+	clients     = make(map[string]*websocket.Conn)
 	broadcaster = make(chan ChatMessage)
 	upgrader    = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
@@ -33,7 +36,7 @@ var (
 )
 
 func healthz(w http.ResponseWriter, r *http.Request) {
-	messageResponseJSON(w, http.StatusOK, model.Message{Message: msgHealthOK})
+	messageResponseJSON(w, http.StatusOK, model.Message{Message: messages.MsgHealthOK})
 }
 
 func createTocken(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +62,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 	err = session.Query("INSERT into users(id, name, username) values (?, ?, ?);", user.ID, user.Name, user.Username).Exec()
 	if err != nil {
 		fmt.Println("Failed creating new user")
-		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: "fail"})
+		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
 		return
 	}
 
@@ -69,28 +72,34 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
-	_, err := auth.ValidateToken(r.URL.Query().Get("token"), session)
+	user, err := auth.ValidateToken(r.URL.Query().Get("token"), session)
 	if err != nil {
-		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: "not auth"})
+		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
 		return
 	}
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		fmt.Println("Error")
 		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
 		return
 	}
 	// ensure connection close when function returns
 	defer ws.Close()
-	clients[ws] = true
+	mapMuxtex.Lock()
+	connections[ws] = user.Username
+	clients[user.Username] = ws
+	mapMuxtex.Unlock()
+	fmt.Println("Connected new client")
 
 	for {
 		var msg ChatMessage
 		// Read in a new message as JSON and map it to a Message object
 		err := ws.ReadJSON(&msg)
 		if err != nil {
-			delete(clients, ws)
+			mapMuxtex.Lock()
+			delete(connections, ws)
+			delete(clients, user.Username)
+			mapMuxtex.Unlock()
 			break
 		}
 		// send new message to the channel
@@ -114,9 +123,11 @@ func HandleMessages() {
 
 func messageClients(msg ChatMessage) {
 	// send to every client currently connected
-	for client := range clients {
-		messageClient(client, msg)
+	mapMuxtex.Lock()
+	for connection := range connections {
+		messageClient(connection, msg)
 	}
+	mapMuxtex.Unlock()
 }
 
 func messageClient(client *websocket.Conn, msg ChatMessage) {
@@ -124,6 +135,26 @@ func messageClient(client *websocket.Conn, msg ChatMessage) {
 	if err != nil && unsafeError(err) {
 		log.Printf("error: %v", err)
 		client.Close()
-		delete(clients, client)
+
+		user := connections[client]
+		delete(connections, client)
+		delete(clients, user)
 	}
+}
+
+func getConnectedUsers(w http.ResponseWriter, r *http.Request) {
+	var number = 0
+	mapMuxtex.Lock()
+	var cons []model.Connection
+	for _, v := range connections {
+		number++
+		connection := model.Connection{
+			Username: v,
+			Active:   true,
+		}
+		cons = append(cons, connection)
+	}
+	mapMuxtex.Unlock()
+	fmt.Printf("SENDING OFF %d\n", number)
+	resultResponseJSON(w, http.StatusOK, cons)
 }

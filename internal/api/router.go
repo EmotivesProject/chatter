@@ -21,6 +21,10 @@ func CreateRouter() chi.Router {
 		r.Get("/", createTocken)
 	})
 
+	r.Route("/connections", func(r chi.Router) {
+		r.Get("/", getConnectedUsers)
+	})
+
 	r.Route("/ws", func(r chi.Router) {
 		r.Get("/", handleConnections)
 	})

@@ -33,6 +33,7 @@ func CreateToken(username string, dbSession *gocql.Session) (model.Token, error)
 	expiration := time.Now().Add(5 * time.Minute).Unix()
 	token.Token = gocql.TimeUUID()
 	token.Expiration = expiration
+	token.Username = username
 
 	err := dbSession.Query("UPDATE users SET user_token=? WHERE id=?;", token.Token, user.ID).Exec()
 	if err != nil {
