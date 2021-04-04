@@ -36,24 +36,21 @@ func NewMessage(message model.ChatMessage) {
 	broadcaster <- message
 }
 
-func ConnectedUsers() []model.Connection {
+func FilterOfflineUsers(OfflineUsers []model.Connection) []model.Connection {
 	mapMutex.Lock()
-	var cons []model.Connection
-	for _, v := range connections {
-		connection := model.Connection{
-			Username: v,
-			Active:   true,
+	for i, v := range OfflineUsers {
+		if clients[v.Username] != nil {
+			OfflineUsers[i].Active = true
 		}
-		cons = append(cons, connection)
 	}
 	mapMutex.Unlock()
-	return cons
+	return OfflineUsers
 }
 
 func HandleMessages() {
 	for {
 		msg := <-broadcaster
-		msg = msg.FillMessage()
+		msg = *msg.FillMessage()
 		messageClients(msg)
 	}
 }

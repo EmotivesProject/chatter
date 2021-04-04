@@ -86,6 +86,20 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 func getConnectedUsers(w http.ResponseWriter, r *http.Request) {
-	cons := connections.ConnectedUsers()
+	offline := db.GetAllUsers()
+	cons := connections.FilterOfflineUsers(offline)
 	resultResponseJSON(w, http.StatusOK, cons)
+}
+
+func getMessages(w http.ResponseWriter, r *http.Request) {
+	username := r.Context().Value(userID)
+	from := r.URL.Query().Get("from")
+	if username != from {
+		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: "Wrong"})
+		return
+	}
+	to := r.URL.Query().Get("to")
+	begin := findBegin(r)
+	messages := db.GetMessagesForUsers(from, to, begin)
+	resultResponseJSON(w, http.StatusOK, messages)
 }

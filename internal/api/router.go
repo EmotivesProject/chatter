@@ -21,6 +21,10 @@ func CreateRouter() chi.Router {
 		r.Get("/", createTocken)
 	})
 
+	r.With(verifyJTW()).Route("/messages", func(r chi.Router) {
+		r.Get("/", getMessages)
+	})
+
 	r.Route("/connections", func(r chi.Router) {
 		r.Get("/", getConnectedUsers)
 	})
