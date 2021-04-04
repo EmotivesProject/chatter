@@ -2,6 +2,8 @@ package main
 
 import (
 	"chatter/internal/api"
+	"chatter/internal/connections"
+	"chatter/internal/db"
 	"log"
 	"net/http"
 	"os"
@@ -19,7 +21,9 @@ func main() {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
 
-	go api.HandleMessages()
+	db.Init()
+
+	go connections.HandleMessages()
 
 	log.Fatal(http.ListenAndServe(host+":"+port, router))
 }

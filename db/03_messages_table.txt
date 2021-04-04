@@ -1,0 +1,10 @@
+CREATE TABLE messages(
+   id uuid PRIMARY KEY,
+   username_to text,
+   username_from text,
+   message text,
+   created timestamp,
+);
+
+create index on messages(username_to);
+create index on messages(username_from);

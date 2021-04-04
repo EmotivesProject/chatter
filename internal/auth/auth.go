@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"chatter/internal/db"
 	"chatter/model"
 	"errors"
 	"fmt"
@@ -9,7 +10,8 @@ import (
 	"github.com/gocql/gocql"
 )
 
-func CreateToken(username string, dbSession *gocql.Session) (model.Token, error) {
+func CreateToken(username string) (model.Token, error) {
+	dbSession := db.GetSession()
 	token := model.Token{}
 	iterable := dbSession.Query("SELECT * FROM users WHERE username = ? LIMIT 1", username).Consistency(gocql.One).Iter()
 	defer iterable.Close()
@@ -43,7 +45,8 @@ func CreateToken(username string, dbSession *gocql.Session) (model.Token, error)
 	return token, nil
 }
 
-func ValidateToken(token string, dbSession *gocql.Session) (model.ShortenedUser, error) {
+func ValidateToken(token string) (model.ShortenedUser, error) {
+	dbSession := db.GetSession()
 	fmt.Println(token)
 	iterable := dbSession.Query("SELECT * FROM users WHERE user_token = ? LIMIT 1", token).Consistency(gocql.One).Iter()
 	defer iterable.Close()
