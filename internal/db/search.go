@@ -26,12 +26,16 @@ func GetAllUsers() []model.Connection {
 	return userList
 }
 
-func GetMessagesForUsers(from, to string, begin int64) []model.ChatMessage {
+func GetMessagesForUsers(from, to string, limit int64) []model.ChatMessage {
+	i := int64(0)
 	var chatList []model.ChatMessage
 	m := map[string]interface{}{}
 	session := GetSession()
 	iterable := session.Query("select * from messages where username_to IN (?, ?) AND username_from IN (?, ?);", from, to, from, to).Iter()
 	for iterable.MapScan(m) {
+		if i >= limit {
+			break
+		}
 		chatList = append(chatList, model.ChatMessage{
 			ID:           m["id"].(gocql.UUID),
 			UsernameFrom: m["username_from"].(string),

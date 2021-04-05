@@ -15,7 +15,6 @@ func CreateUser(user *model.ShortenedUser) error {
 }
 
 func CreateMessage(msg model.ChatMessage) {
-	fmt.Println("EEREE")
 	session := GetSession()
 
 	err := session.Query("INSERT into messages(id, created, message, username_from, username_to) values (?, ?, ?, ?, ?);", msg.ID, msg.Created, msg.Message, msg.UsernameFrom, msg.UsernameTo).Exec()

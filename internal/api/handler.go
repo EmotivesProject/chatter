@@ -99,7 +99,7 @@ func getMessages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	to := r.URL.Query().Get("to")
-	begin := findBegin(r)
-	messages := db.GetMessagesForUsers(from, to, begin)
+	limit := findLimit(r)
+	messages := db.GetMessagesForUsers(from, to, limit)
 	resultResponseJSON(w, http.StatusOK, messages)
 }
