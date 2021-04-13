@@ -2,9 +2,9 @@ package auth
 
 import (
 	"chatter/internal/db"
+	"chatter/internal/logger"
 	"chatter/model"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/gocql/gocql"
@@ -47,7 +47,7 @@ func CreateToken(username string) (model.Token, error) {
 
 func ValidateToken(token string) (model.ShortenedUser, error) {
 	dbSession := db.GetSession()
-	fmt.Println(token)
+	logger.Infof("Trying to find token %s", token)
 	iterable := dbSession.Query("SELECT * FROM users WHERE user_token = ? LIMIT 1", token).Consistency(gocql.One).Iter()
 	defer iterable.Close()
 	var user model.ShortenedUser
@@ -67,6 +67,5 @@ func ValidateToken(token string) (model.ShortenedUser, error) {
 	}
 
 	err := dbSession.Query("UPDATE users SET user_token = null WHERE id = ?", user.ID).Exec()
-	fmt.Println(err)
 	return user, err
 }

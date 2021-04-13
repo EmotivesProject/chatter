@@ -1,7 +1,7 @@
 package db
 
 import (
-	"fmt"
+	"chatter/internal/logger"
 
 	"github.com/gocql/gocql"
 )
@@ -15,9 +15,9 @@ func Init() {
 	cluster.Keyspace = "chatter"
 	session, err := cluster.CreateSession()
 	if err != nil {
-		panic(err)
+		logger.Fatal(err)
 	}
-	fmt.Println("Connected to Cassandra. All systems go!")
+	logger.Info("Connected to cassandra db")
 	Session = session
 }
 

@@ -2,6 +2,7 @@ package connections
 
 import (
 	"chatter/internal/db"
+	"chatter/internal/logger"
 	"chatter/model"
 	"io"
 	"log"
@@ -18,6 +19,7 @@ var (
 )
 
 func Add(ws *websocket.Conn, username string) {
+	logger.Infof("Adding %s", username)
 	mapMutex.Lock()
 	connections[ws] = username
 	clients[username] = ws
@@ -27,6 +29,7 @@ func Add(ws *websocket.Conn, username string) {
 func Remove(ws *websocket.Conn) {
 	mapMutex.Lock()
 	user := connections[ws]
+	logger.Infof("removing %s", user) // shouldn't be logging in a mutex lock
 	delete(connections, ws)
 	delete(clients, user)
 	mapMutex.Unlock()

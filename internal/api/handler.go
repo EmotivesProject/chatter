@@ -4,6 +4,7 @@ import (
 	"chatter/internal/auth"
 	"chatter/internal/connections"
 	"chatter/internal/db"
+	"chatter/internal/logger"
 	"chatter/internal/messages"
 	"chatter/model"
 	"encoding/json"
@@ -29,9 +30,11 @@ func createTocken(w http.ResponseWriter, r *http.Request) {
 	username := r.Context().Value(userID)
 	token, err := auth.CreateToken(fmt.Sprintf("%v", username))
 	if err != nil {
+		logger.Error(err)
 		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
 		return
 	}
+	logger.Infof("Created token for user %s", username)
 	resultResponseJSON(w, http.StatusOK, token)
 }
 
@@ -39,18 +42,19 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 	user := &model.ShortenedUser{}
 	err := json.NewDecoder(r.Body).Decode(user)
 	if err != nil {
+		logger.Error(err)
 		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
 		return
 	}
 
 	err = db.CreateUser(user)
 	if err != nil {
-		fmt.Println("Failed creating new user")
+		logger.Error(err)
 		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
 		return
 	}
 
-	fmt.Println("Created new user")
+	logger.Info("Created new user")
 
 	resultResponseJSON(w, http.StatusOK, user)
 }
@@ -58,19 +62,21 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 func handleConnections(w http.ResponseWriter, r *http.Request) {
 	user, err := auth.ValidateToken(r.URL.Query().Get("token"))
 	if err != nil {
+		logger.Error(err)
 		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
 		return
 	}
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
+		logger.Error(err)
 		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
 		return
 	}
 	// ensure connection close when function returns
 	defer ws.Close()
 	connections.Add(ws, user.Username)
-	fmt.Println("Connected new client")
+	logger.Infof("Connecting user %s", user.Username)
 
 	for {
 		var msg model.ChatMessage

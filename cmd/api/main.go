@@ -4,6 +4,7 @@ import (
 	"chatter/internal/api"
 	"chatter/internal/connections"
 	"chatter/internal/db"
+	"chatter/internal/logger"
 	"log"
 	"net/http"
 	"os"
@@ -12,6 +13,8 @@ import (
 )
 
 func main() {
+	logger.InitLogger()
+
 	router := api.CreateRouter()
 
 	err := godotenv.Load()
