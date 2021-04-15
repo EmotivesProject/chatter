@@ -8,10 +8,13 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var myLogger *zap.Logger
-var mySugarLogger *zap.SugaredLogger
+var (
+	myLogger      *zap.Logger
+	mySugarLogger *zap.SugaredLogger
+	serviceName   string
+)
 
-func InitLogger() {
+func InitLogger(name string) {
 	atom := zap.NewAtomicLevel()
 
 	encoderCfg := zap.NewProductionEncoderConfig()
@@ -28,24 +31,26 @@ func InitLogger() {
 
 	mySugarLogger = myLogger.Sugar()
 
-	atom.SetLevel(zap.DebugLevel)
+	atom.SetLevel(zap.InfoLevel)
 
-	myLogger.Info("Created Logger")
+	serviceName = name
+
+	Info("Created Logger")
 }
 
 func Info(message string) {
-	myLogger.Info(message)
+	myLogger.Info(message, zap.String("service", serviceName))
 }
 
 func Infof(format string, v ...interface{}) {
 	message := fmt.Sprintf(format, v...)
-	myLogger.Info(message)
+	myLogger.Info(message, zap.String("service", serviceName))
 }
 
 func Error(err error) {
-	myLogger.Error(err.Error())
+	myLogger.Error(err.Error(), zap.String("service", serviceName))
 }
 
 func Fatal(err error) {
-	myLogger.Fatal(err.Error())
+	myLogger.Fatal(err.Error(), zap.String("service", serviceName))
 }

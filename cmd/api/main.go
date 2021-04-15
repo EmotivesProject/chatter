@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	logger.InitLogger()
+	logger.InitLogger("chatter")
 
 	router := api.CreateRouter()
 
