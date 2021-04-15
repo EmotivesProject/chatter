@@ -10,7 +10,7 @@ import (
 	"github.com/gocql/gocql"
 )
 
-func CreateToken(username string) (model.Token, error) {
+func CreateToken(username string, previouslyCalled bool) (model.Token, error) {
 	dbSession := db.GetSession()
 	token := model.Token{}
 	iterable := dbSession.Query("SELECT * FROM users WHERE username = ? LIMIT 1", username).Consistency(gocql.One).Iter()
@@ -22,13 +22,20 @@ func CreateToken(username string) (model.Token, error) {
 	for iterable.MapScan(m) {
 		found = true
 		user.ID = m["id"].(gocql.UUID)
-		user.Name = m["name"].(string)
 		user.Username = m["username"].(string)
 		user.Token = m["user_token"].(gocql.UUID)
 	}
 
-	if !found {
+	if !found && previouslyCalled {
 		return token, errors.New("User not found")
+	}
+	if !found {
+		err := db.CreateUser(username)
+		if err != nil {
+			return token, err
+		} else {
+			return CreateToken(username, true)
+		}
 	}
 
 	// Create and set items for return statement
@@ -57,7 +64,6 @@ func ValidateToken(token string) (model.ShortenedUser, error) {
 	for iterable.MapScan(m) {
 		found = true
 		user.ID = m["id"].(gocql.UUID)
-		user.Name = m["name"].(string)
 		user.Username = m["username"].(string)
 		user.Token = m["user_token"].(gocql.UUID)
 	}

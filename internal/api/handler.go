@@ -7,7 +7,6 @@ import (
 	"chatter/internal/logger"
 	"chatter/internal/messages"
 	"chatter/model"
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -28,7 +27,7 @@ func healthz(w http.ResponseWriter, r *http.Request) {
 
 func createTocken(w http.ResponseWriter, r *http.Request) {
 	username := r.Context().Value(userID)
-	token, err := auth.CreateToken(fmt.Sprintf("%v", username))
+	token, err := auth.CreateToken(fmt.Sprintf("%v", username), false)
 	if err != nil {
 		logger.Error(err)
 		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
@@ -36,27 +35,6 @@ func createTocken(w http.ResponseWriter, r *http.Request) {
 	}
 	logger.Infof("Created token for user %s", username)
 	resultResponseJSON(w, http.StatusOK, token)
-}
-
-func createUser(w http.ResponseWriter, r *http.Request) {
-	user := &model.ShortenedUser{}
-	err := json.NewDecoder(r.Body).Decode(user)
-	if err != nil {
-		logger.Error(err)
-		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
-		return
-	}
-
-	err = db.CreateUser(user)
-	if err != nil {
-		logger.Error(err)
-		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
-		return
-	}
-
-	logger.Info("Created new user")
-
-	resultResponseJSON(w, http.StatusOK, user)
 }
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {

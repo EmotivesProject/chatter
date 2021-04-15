@@ -7,11 +7,12 @@ import (
 	"github.com/gocql/gocql"
 )
 
-func CreateUser(user *model.ShortenedUser) error {
+func CreateUser(username string) error {
 	session := GetSession()
-	user.ID = gocql.TimeUUID()
+	userID := gocql.TimeUUID()
 
-	return session.Query("INSERT into users(id, name, username) values (?, ?, ?);", user.ID, user.Name, user.Username).Exec()
+	logger.Infof("Creating user %s", username)
+	return session.Query("INSERT into users(id, username) values (?, ?);", userID, username).Exec()
 }
 
 func CreateMessage(msg model.ChatMessage) {
