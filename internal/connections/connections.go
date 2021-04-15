@@ -2,11 +2,12 @@ package connections
 
 import (
 	"chatter/internal/db"
-	"chatter/internal/logger"
 	"chatter/model"
 	"io"
 	"log"
 	"sync"
+
+	"github.com/TomBowyerResearchProject/common/logger"
 
 	"github.com/gorilla/websocket"
 )

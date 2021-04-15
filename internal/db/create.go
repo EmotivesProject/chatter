@@ -1,8 +1,9 @@
 package db
 
 import (
-	"chatter/internal/logger"
 	"chatter/model"
+
+	"github.com/TomBowyerResearchProject/common/logger"
 
 	"github.com/gocql/gocql"
 )

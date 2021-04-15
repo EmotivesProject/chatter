@@ -4,11 +4,11 @@ import (
 	"chatter/internal/api"
 	"chatter/internal/connections"
 	"chatter/internal/db"
-	"chatter/internal/logger"
 	"log"
 	"net/http"
 	"os"
 
+	"github.com/TomBowyerResearchProject/common/logger"
 	"github.com/joho/godotenv"
 )
 

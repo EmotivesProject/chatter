@@ -4,12 +4,12 @@ import (
 	"chatter/internal/auth"
 	"chatter/internal/connections"
 	"chatter/internal/db"
-	"chatter/internal/logger"
 	"chatter/internal/messages"
 	"chatter/model"
 	"fmt"
 	"net/http"
 
+	"github.com/TomBowyerResearchProject/common/logger"
 	"github.com/gorilla/websocket"
 )
 

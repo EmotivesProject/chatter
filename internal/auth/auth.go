@@ -2,10 +2,11 @@ package auth
 
 import (
 	"chatter/internal/db"
-	"chatter/internal/logger"
 	"chatter/model"
 	"errors"
 	"time"
+
+	"github.com/TomBowyerResearchProject/common/logger"
 
 	"github.com/gocql/gocql"
 )

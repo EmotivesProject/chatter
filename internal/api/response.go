@@ -1,10 +1,11 @@
 package api
 
 import (
-	"chatter/internal/logger"
 	"chatter/model"
 	"encoding/json"
 	"net/http"
+
+	"github.com/TomBowyerResearchProject/common/logger"
 )
 
 func resultResponseJSON(w http.ResponseWriter, status int, result interface{}) {
