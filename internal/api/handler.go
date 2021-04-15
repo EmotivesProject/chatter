@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/TomBowyerResearchProject/common/logger"
+	"github.com/TomBowyerResearchProject/common/response"
 	"github.com/gorilla/websocket"
 )
 
@@ -22,7 +23,7 @@ var (
 )
 
 func healthz(w http.ResponseWriter, r *http.Request) {
-	messageResponseJSON(w, http.StatusOK, model.Message{Message: messages.MsgHealthOK})
+	response.MessageResponseJSON(w, http.StatusOK, response.Message{Message: messages.MsgHealthOK})
 }
 
 func createTocken(w http.ResponseWriter, r *http.Request) {
@@ -30,25 +31,25 @@ func createTocken(w http.ResponseWriter, r *http.Request) {
 	token, err := auth.CreateToken(fmt.Sprintf("%v", username), false)
 	if err != nil {
 		logger.Error(err)
-		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
+		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: err.Error()})
 		return
 	}
 	logger.Infof("Created token for user %s", username)
-	resultResponseJSON(w, http.StatusOK, token)
+	response.ResultResponseJSON(w, http.StatusOK, token)
 }
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
 	user, err := auth.ValidateToken(r.URL.Query().Get("token"))
 	if err != nil {
 		logger.Error(err)
-		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
+		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: err.Error()})
 		return
 	}
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		logger.Error(err)
-		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: err.Error()})
+		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: err.Error()})
 		return
 	}
 	// ensure connection close when function returns
@@ -72,18 +73,18 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 func getConnectedUsers(w http.ResponseWriter, r *http.Request) {
 	offline := db.GetAllUsers()
 	cons := connections.FilterOfflineUsers(offline)
-	resultResponseJSON(w, http.StatusOK, cons)
+	response.ResultResponseJSON(w, http.StatusOK, cons)
 }
 
 func getMessages(w http.ResponseWriter, r *http.Request) {
 	username := r.Context().Value(userID)
 	from := r.URL.Query().Get("from")
 	if username != from {
-		messageResponseJSON(w, http.StatusBadRequest, model.Message{Message: "Wrong"})
+		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: "Wrong"})
 		return
 	}
 	to := r.URL.Query().Get("to")
 	limit := findLimit(r)
 	messages := db.GetMessagesForUsers(from, to, limit)
-	resultResponseJSON(w, http.StatusOK, messages)
+	response.ResultResponseJSON(w, http.StatusOK, messages)
 }

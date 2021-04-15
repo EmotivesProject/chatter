@@ -1,7 +1,10 @@
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/TomBowyerResearchProject/common v0.0.0-20210415085024-5081280e07de h1:nTS1KJem8TUXJnwzGYIMyYMAs+R2trFxBZ+almqSes8=
+github.com/TomBowyerResearchProject/common v0.0.0-20210415091410-088ae6038e62 h1:ZCjoaDiFKhTdtINbLbLTv44TjWe+VwSEMGK3YFerb+k=
 github.com/TomBowyerResearchProject/common/logger v0.0.0-20210415085024-5081280e07de h1:ctDA7RKbq9YNOJEsZhW95cBM61Gq0Q49REvrtQvnLSY=
 github.com/TomBowyerResearchProject/common/logger v0.0.0-20210415085024-5081280e07de/go.mod h1:HxQH9yD6ypU+/pHdDaPWsTezIqaqgvzBzeTuo+zwRLc=
+github.com/TomBowyerResearchProject/common/response v0.0.0-20210415091410-088ae6038e62 h1:SkSNR6nCjfJso+Yuuoq+GN92PVM34KUwHiY7r6VP1Q0=
+github.com/TomBowyerResearchProject/common/response v0.0.0-20210415091410-088ae6038e62/go.mod h1:fib988ehDtUcBwwwNhHWjQSSruMEEMCLb5QZnfyWU84=
 github.com/bitly/go-hostpool v0.0.0-20171023180738-a3a6125de932 h1:mXoPYz/Ul5HYEDvkta6I8/rnYM5gSdSV2tJ6XbZuEtY=
 github.com/bitly/go-hostpool v0.0.0-20171023180738-a3a6125de932/go.mod h1:NOuUCSz6Q9T7+igc/hlvDOUdtWKryOrtFyIVABv/p7k=
 github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 h1:DDGfHa7BWjL4YnC6+E63dPcxHo2sUxDIu8g3QgEJdRY=
