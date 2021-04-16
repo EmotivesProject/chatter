@@ -3,19 +3,27 @@ package model
 import (
 	"time"
 
-	"github.com/gocql/gocql"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ChatMessage struct {
-	ID           gocql.UUID `json:"id"`
-	UsernameFrom string     `json:"username_from"`
-	UsernameTo   string     `json:"username_to"`
-	Message      string     `json:"message"`
-	Created      time.Time  `json:"created"`
+	ID           primitive.ObjectID `bson:"_id" json:"id"`
+	UsernameFrom string             `bson:"username_from" json:"username_from"`
+	UsernameTo   string             `bson:"username_to" json:"username_to"`
+	Message      string             `bson:"message,omitempty" json:"message,omitempty"`
+	ImagePath    string             `bson:"image_path,omitempty" json:"image_path,omitempty"`
+	Created      time.Time          `bson:"created" json:"created"`
 }
 
 func (c *ChatMessage) FillMessage() *ChatMessage {
-	c.ID = gocql.TimeUUID()
+	c.ID = primitive.NewObjectID()
 	c.Created = time.Now()
 	return c
+}
+
+func (c ChatMessage) Validate() bool {
+	if c.Message == "" && c.ImagePath == "" {
+		return false
+	}
+	return true
 }

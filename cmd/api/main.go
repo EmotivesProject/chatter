@@ -24,7 +24,7 @@ func main() {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
 
-	db.Init()
+	db.Connect()
 
 	go connections.HandleMessages()
 

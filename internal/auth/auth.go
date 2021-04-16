@@ -2,50 +2,29 @@ package auth
 
 import (
 	"chatter/internal/db"
+	"chatter/internal/messages"
 	"chatter/model"
-	"errors"
+	"math/rand"
 	"time"
-
-	"github.com/TomBowyerResearchProject/common/logger"
-
-	"github.com/gocql/gocql"
 )
 
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 func CreateToken(username string, previouslyCalled bool) (model.Token, error) {
-	dbSession := db.GetSession()
-	token := model.Token{}
-	iterable := dbSession.Query("SELECT * FROM users WHERE username = ? LIMIT 1", username).Consistency(gocql.One).Iter()
-	defer iterable.Close()
+	var token model.Token
 
-	var user model.ShortenedUser
-	found := false
-	m := map[string]interface{}{}
-	for iterable.MapScan(m) {
-		found = true
-		user.ID = m["id"].(gocql.UUID)
-		user.Username = m["username"].(string)
-		user.Token = m["user_token"].(gocql.UUID)
-	}
-
-	if !found && previouslyCalled {
-		return token, errors.New("User not found")
-	}
-	if !found {
-		err := db.CreateUser(username)
-		if err != nil {
-			return token, err
-		} else {
-			return CreateToken(username, true)
-		}
+	_, err := db.FindUser(username)
+	if err != nil {
+		return token, messages.ErrFailedUsername
 	}
 
 	// Create and set items for return statement
 	expiration := time.Now().Add(5 * time.Minute).Unix()
-	token.Token = gocql.TimeUUID()
+	token.Token = RandStringBytes(20)
 	token.Expiration = expiration
 	token.Username = username
 
-	err := dbSession.Query("UPDATE users SET user_token=? WHERE id=?;", token.Token, user.ID).Exec()
+	_, err = db.CreateToken(token)
 	if err != nil {
 		return token, err
 	}
@@ -53,26 +32,22 @@ func CreateToken(username string, previouslyCalled bool) (model.Token, error) {
 	return token, nil
 }
 
-func ValidateToken(token string) (model.ShortenedUser, error) {
-	dbSession := db.GetSession()
-	logger.Infof("Trying to find token %s", token)
-	iterable := dbSession.Query("SELECT * FROM users WHERE user_token = ? LIMIT 1", token).Consistency(gocql.One).Iter()
-	defer iterable.Close()
-	var user model.ShortenedUser
+func ValidateToken(token string) (string, error) {
+	tokenObj, err := db.FindToken(token)
 
-	found := false
-	m := map[string]interface{}{}
-	for iterable.MapScan(m) {
-		found = true
-		user.ID = m["id"].(gocql.UUID)
-		user.Username = m["username"].(string)
-		user.Token = m["user_token"].(gocql.UUID)
+	if err != nil {
+		return "", err
 	}
 
-	if !found {
-		return user, errors.New("User not found")
-	}
+	err = db.DeleteToken(tokenObj.Token)
 
-	err := dbSession.Query("UPDATE users SET user_token = null WHERE id = ?", user.ID).Exec()
-	return user, err
+	return tokenObj.Username, err
+}
+
+func RandStringBytes(n int) string {
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
 }

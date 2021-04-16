@@ -1,9 +1,7 @@
 package model
 
-import "github.com/gocql/gocql"
-
 type Token struct {
-	Token      gocql.UUID `json:"token"`
-	Username   string     `json:"username"`
-	Expiration int64      `json:"expires"`
+	Token      string `bson:"token" json:"token"`
+	Username   string `bson:"username" json:"username"`
+	Expiration int64  `bson:"expires" json:"expires"`
 }

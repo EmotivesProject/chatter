@@ -24,22 +24,23 @@ services:
         aliases:
           - chatter
 
-  cassandra:
-    image: cassandra:latest
-    hostname: cassandra-server
-    ports:
-      - 9042:9042
+  mongo:
+    image: mongo:latest
     environment:
-      - "MAX_HEAP_SIZE=256M"
-      - "HEAP_NEWSIZE=128M"
-    restart: always
+      MONGO_INITDB_DATABASE: chatter-db
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    ports:
+      - 27017:27017
     volumes:
-      - cassandra_data:/var/lib/cassandra
+      - mongodb_data:/data/db
+      - ../../db/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    restart: unless-stopped
     networks:
       default:
 
 volumes:
-  cassandra_data:
+  mongodb_data:
 
 networks:
   emotives:

@@ -1,26 +1,41 @@
 package db
 
 import (
+	"context"
+	"log"
+	"time"
+
 	"github.com/TomBowyerResearchProject/common/logger"
 
-	"github.com/gocql/gocql"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
-	Session *gocql.Session
+	db *mongo.Database
 )
 
-func Init() {
-	cluster := gocql.NewCluster("cassandra")
-	cluster.Keyspace = "chatter"
-	session, err := cluster.CreateSession()
+func Connect() {
+	// Set client options
+	clientOptions := options.Client().ApplyURI("mongodb://admin:admin@mongo:27017")
+
+	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
+
+	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
-	logger.Info("Connected to cassandra db")
-	Session = session
+
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	logger.Info("Connected to MongoDB!")
+
+	db = client.Database(DBName)
 }
 
-func GetSession() *gocql.Session {
-	return Session
+func GetDatabase() *mongo.Database {
+	return db
 }

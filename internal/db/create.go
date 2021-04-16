@@ -2,27 +2,34 @@ package db
 
 import (
 	"chatter/model"
+	"context"
 
-	"github.com/TomBowyerResearchProject/common/logger"
-
-	"github.com/gocql/gocql"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func CreateUser(username string) error {
-	session := GetSession()
-	userID := gocql.TimeUUID()
+func CreateUser(username string) (*model.User, error) {
+	user := model.User{
+		Username: username,
+	}
+	user.ID = primitive.NewObjectID()
 
-	logger.Infof("Creating user %s", username)
-	return session.Query("INSERT into users(id, username) values (?, ?);", userID, username).Exec()
+	_, err := insetIntoCollection(UsersCollection, user)
+	return &user, err
 }
 
-func CreateMessage(msg model.ChatMessage) {
-	session := GetSession()
+func CreateMessage(msg model.ChatMessage) (*model.ChatMessage, error) {
+	_, err := insetIntoCollection(MessageCollection, msg)
+	return &msg, err
+}
 
-	logger.Infof("Creating new message %s %s %s", msg.Message, msg.UsernameFrom, msg.UsernameTo)
+func CreateToken(token model.Token) (*model.Token, error) {
+	_, err := insetIntoCollection(TokensCollection, token)
+	return &token, err
+}
 
-	err := session.Query("INSERT into messages(id, created, message, username_from, username_to) values (?, ?, ?, ?, ?);", msg.ID, msg.Created, msg.Message, msg.UsernameFrom, msg.UsernameTo).Exec()
-	if err != nil {
-		logger.Error(err)
-	}
+func insetIntoCollection(collectionName string, document interface{}) (*mongo.InsertOneResult, error) {
+	db := GetDatabase()
+	collection := db.Collection(collectionName)
+	return collection.InsertOne(context.TODO(), document)
 }

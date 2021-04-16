@@ -39,7 +39,7 @@ func createTocken(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
-	user, err := auth.ValidateToken(r.URL.Query().Get("token"))
+	username, err := auth.ValidateToken(r.URL.Query().Get("token"))
 	if err != nil {
 		logger.Error(err)
 		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: err.Error()})
@@ -54,8 +54,8 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	}
 	// ensure connection close when function returns
 	defer ws.Close()
-	connections.Add(ws, user.Username)
-	logger.Infof("Connecting user %s", user.Username)
+	connections.Add(ws, username)
+	logger.Infof("Connecting user %s", username)
 
 	for {
 		var msg model.ChatMessage
@@ -84,7 +84,7 @@ func getMessages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	to := r.URL.Query().Get("to")
-	limit := findLimit(r)
-	messages := db.GetMessagesForUsers(from, to, limit)
+	skip := findSkip(r)
+	messages := db.GetMessagesForUsers(from, to, skip)
 	response.ResultResponseJSON(w, http.StatusOK, messages)
 }
