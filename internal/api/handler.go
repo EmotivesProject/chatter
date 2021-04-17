@@ -11,6 +11,7 @@ import (
 
 	"github.com/TomBowyerResearchProject/common/logger"
 	"github.com/TomBowyerResearchProject/common/response"
+	"github.com/TomBowyerResearchProject/common/verification"
 	"github.com/gorilla/websocket"
 )
 
@@ -27,7 +28,7 @@ func healthz(w http.ResponseWriter, r *http.Request) {
 }
 
 func createTocken(w http.ResponseWriter, r *http.Request) {
-	username := r.Context().Value(userID)
+	username := r.Context().Value(verification.UserID)
 	token, err := auth.CreateToken(fmt.Sprintf("%v", username), false)
 	if err != nil {
 		logger.Error(err)
@@ -77,7 +78,7 @@ func getConnectedUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func getMessages(w http.ResponseWriter, r *http.Request) {
-	username := r.Context().Value(userID)
+	username := r.Context().Value(verification.UserID)
 	from := r.URL.Query().Get("from")
 	if username != from {
 		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: "Wrong"})

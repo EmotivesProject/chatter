@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/TomBowyerResearchProject/common/verification"
 	"github.com/go-chi/chi"
 )
 
@@ -13,11 +14,11 @@ func CreateRouter() chi.Router {
 		r.Get("/healthz", healthz)
 	})
 
-	r.With(verifyJTW()).Route("/ws_token", func(r chi.Router) {
+	r.With(verification.VerifyJTW()).Route("/ws_token", func(r chi.Router) {
 		r.Get("/", createTocken)
 	})
 
-	r.With(verifyJTW()).Route("/messages", func(r chi.Router) {
+	r.With(verification.VerifyJTW()).Route("/messages", func(r chi.Router) {
 		r.Get("/", getMessages)
 	})
 

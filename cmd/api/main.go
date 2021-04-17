@@ -9,11 +9,16 @@ import (
 	"os"
 
 	"github.com/TomBowyerResearchProject/common/logger"
+	"github.com/TomBowyerResearchProject/common/verification"
 	"github.com/joho/godotenv"
 )
 
 func main() {
 	logger.InitLogger("chatter")
+
+	verification.Init(verification.VerificationConfig{
+		VerificationURL: "http://uacl/authorize",
+	})
 
 	router := api.CreateRouter()
 
