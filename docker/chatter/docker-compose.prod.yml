@@ -17,6 +17,8 @@ services:
       - "traefik.http.routers.chatter.tls.certresolver=letsencrypt"
       - "traefik.docker.network=traefik"
     restart: unless-stopped
+    depends_on:
+      - "mongo"
     networks:
       traefik:
       default:
