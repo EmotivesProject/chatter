@@ -4,7 +4,6 @@ import (
 	"chatter/internal/db"
 	"chatter/model"
 	"io"
-	"log"
 	"sync"
 
 	"github.com/TomBowyerResearchProject/common/logger"
@@ -25,15 +24,17 @@ func Add(ws *websocket.Conn, username string) {
 	connections[ws] = username
 	clients[username] = ws
 	mapMutex.Unlock()
+	notifyOfConnectionUpdate(username, true)
 }
 
 func Remove(ws *websocket.Conn) {
 	mapMutex.Lock()
-	user := connections[ws]
-	logger.Infof("removing %s", user) // shouldn't be logging in a mutex lock
+	username := connections[ws]
+	logger.Infof("removing %s", username) // shouldn't be logging in a mutex lock
 	delete(connections, ws)
-	delete(clients, user)
+	delete(clients, username)
 	mapMutex.Unlock()
+	notifyOfConnectionUpdate(username, false)
 }
 
 func NewMessage(message model.ChatMessage) {
@@ -51,6 +52,19 @@ func FilterOfflineUsers(OfflineUsers []model.Connection) []model.Connection {
 	return OfflineUsers
 }
 
+func notifyOfConnectionUpdate(username string, active bool) {
+	connection := model.Connection{
+		Username: username,
+		Active:   active,
+	}
+
+	for i, v := range clients {
+		if i != username {
+			messageClient(v, connection)
+		}
+	}
+}
+
 func HandleMessages() {
 	for {
 		msg := <-broadcaster
@@ -60,21 +74,26 @@ func HandleMessages() {
 }
 
 func messageClients(msg model.ChatMessage) {
-	db.CreateMessage(msg)
+	_, err := db.CreateMessage(msg)
+	if err != nil {
+		logger.Error(err)
+	}
+
 	to := clients[msg.UsernameTo]
 	if to != nil {
 		messageClient(to, msg)
 	}
+
 	from := clients[msg.UsernameFrom]
 	if from != nil {
 		messageClient(from, msg)
 	}
 }
 
-func messageClient(client *websocket.Conn, msg model.ChatMessage) {
+func messageClient(client *websocket.Conn, msg interface{}) {
 	err := client.WriteJSON(msg)
 	if err != nil && unsafeError(err) {
-		log.Printf("error: %v", err)
+		logger.Error(err)
 		defer client.Close()
 		Remove(client)
 	}
