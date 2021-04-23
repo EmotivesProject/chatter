@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/TomBowyerResearchProject/common/logger"
+	"github.com/TomBowyerResearchProject/common/middlewares"
 	"github.com/TomBowyerResearchProject/common/verification"
 	"github.com/joho/godotenv"
 )
@@ -18,6 +19,12 @@ func main() {
 
 	verification.Init(verification.VerificationConfig{
 		VerificationURL: "http://uacl/authorize",
+	})
+
+	middlewares.Init(middlewares.Config{
+		AllowedOrigin:  "*",
+		AllowedMethods: "GET,OPTIONS",
+		AllowedHeaders: "Accept, Content-Type, Content-Length, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header",
 	})
 
 	router := api.CreateRouter()

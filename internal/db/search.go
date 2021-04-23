@@ -15,7 +15,7 @@ const (
 	PageLimit = 20
 )
 
-func FindUser(username string) (model.User, error) {
+func FindUser(username string) (*model.User, error) {
 	user := model.User{}
 	filter := bson.D{primitive.E{Key: "username", Value: username}}
 
@@ -26,12 +26,12 @@ func FindUser(username string) (model.User, error) {
 	// Create the user
 	if err == mongo.ErrNoDocuments {
 		userdef, err := CreateUser(username)
-		return *userdef, err
+		return userdef, err
 	}
-	return user, err
+	return &user, err
 }
 
-func FindToken(token string) (model.Token, error) {
+func FindToken(token string) (*model.Token, error) {
 	tokenObj := model.Token{}
 	filter := bson.D{primitive.E{Key: "token", Value: token}}
 
@@ -41,19 +41,19 @@ func FindToken(token string) (model.Token, error) {
 
 	// Create the user
 	if err == mongo.ErrNoDocuments {
-		return tokenObj, messages.ErrNoToken
+		return &tokenObj, messages.ErrNoToken
 	}
-	return tokenObj, err
+	return &tokenObj, err
 }
 
-func GetAllUsers() []model.Connection {
+func GetAllUsers() *[]model.Connection {
 	var userList []model.Connection
 
 	db := GetDatabase()
 	userCollection := db.Collection(UsersCollection)
 	cursor, err := userCollection.Find(context.TODO(), bson.D{})
 	if err == mongo.ErrNoDocuments {
-		return userList
+		return &userList
 	}
 
 	for cursor.Next(context.TODO()) {
@@ -68,10 +68,10 @@ func GetAllUsers() []model.Connection {
 		userList = append(userList, connection)
 	}
 
-	return userList
+	return &userList
 }
 
-func GetMessagesForUsers(from, to string, skip int64) []model.ChatMessage {
+func GetMessagesForUsers(from, to string, skip int64) *[]model.ChatMessage {
 	var chatList []model.ChatMessage
 
 	query := bson.M{
@@ -99,7 +99,7 @@ func GetMessagesForUsers(from, to string, skip int64) []model.ChatMessage {
 	messageCollection := db.Collection(MessageCollection)
 	cursor, err := messageCollection.Find(context.TODO(), full)
 	if err == mongo.ErrNoDocuments {
-		return chatList
+		return &chatList
 	}
 
 	for cursor.Next(context.TODO()) {
@@ -114,5 +114,5 @@ func GetMessagesForUsers(from, to string, skip int64) []model.ChatMessage {
 		chatList = append(chatList, chatmessage)
 	}
 
-	return chatList
+	return &chatList
 }

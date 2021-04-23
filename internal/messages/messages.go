@@ -3,7 +3,8 @@ package messages
 import "errors"
 
 const (
-	MsgHealthOK = "Health ok"
+	MsgHealthOK   = "Health ok"
+	WrongResponse = "Wrong"
 )
 
 var (

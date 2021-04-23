@@ -6,7 +6,6 @@ import (
 	"chatter/internal/db"
 	"chatter/internal/messages"
 	"chatter/model"
-	"fmt"
 	"net/http"
 
 	"github.com/TomBowyerResearchProject/common/logger"
@@ -28,8 +27,8 @@ func healthz(w http.ResponseWriter, r *http.Request) {
 }
 
 func createTocken(w http.ResponseWriter, r *http.Request) {
-	username := r.Context().Value(verification.UserID)
-	token, err := auth.CreateToken(fmt.Sprintf("%v", username), false)
+	username := r.Context().Value(verification.UserID).(string)
+	token, err := auth.CreateToken(username, false)
 	if err != nil {
 		logger.Error(err)
 		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: err.Error()})
@@ -73,7 +72,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 
 func getConnectedUsers(w http.ResponseWriter, r *http.Request) {
 	offline := db.GetAllUsers()
-	cons := connections.FilterOfflineUsers(offline)
+	cons := connections.FilterOfflineUsers(*offline)
 	response.ResultResponseJSON(w, http.StatusOK, cons)
 }
 
@@ -81,7 +80,7 @@ func getMessages(w http.ResponseWriter, r *http.Request) {
 	username := r.Context().Value(verification.UserID)
 	from := r.URL.Query().Get("from")
 	if username != from {
-		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: "Wrong"})
+		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: messages.WrongResponse})
 		return
 	}
 	to := r.URL.Query().Get("to")

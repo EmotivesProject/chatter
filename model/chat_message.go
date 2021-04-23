@@ -15,10 +15,9 @@ type ChatMessage struct {
 	Created      time.Time          `bson:"created" json:"created"`
 }
 
-func (c *ChatMessage) FillMessage() *ChatMessage {
+func (c *ChatMessage) FillMessage() {
 	c.ID = primitive.NewObjectID()
 	c.Created = time.Now()
-	return c
 }
 
 func (c ChatMessage) Validate() bool {

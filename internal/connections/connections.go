@@ -68,7 +68,7 @@ func notifyOfConnectionUpdate(username string, active bool) {
 func HandleMessages() {
 	for {
 		msg := <-broadcaster
-		msg = *msg.FillMessage()
+		msg.FillMessage()
 		messageClients(msg)
 	}
 }
