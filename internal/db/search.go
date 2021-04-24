@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/TomBowyerResearchProject/common/logger"
+	commonMongo "github.com/TomBowyerResearchProject/common/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -19,7 +20,7 @@ func FindUser(username string) (*model.User, error) {
 	user := model.User{}
 	filter := bson.D{primitive.E{Key: "username", Value: username}}
 
-	db := GetDatabase()
+	db := commonMongo.GetDatabase()
 	usersCollection := db.Collection(UsersCollection)
 	err := usersCollection.FindOne(context.TODO(), filter).Decode(&user)
 
@@ -35,7 +36,7 @@ func FindToken(token string) (*model.Token, error) {
 	tokenObj := model.Token{}
 	filter := bson.D{primitive.E{Key: "token", Value: token}}
 
-	db := GetDatabase()
+	db := commonMongo.GetDatabase()
 	tokenCollection := db.Collection(TokensCollection)
 	err := tokenCollection.FindOne(context.TODO(), filter).Decode(&tokenObj)
 
@@ -49,7 +50,7 @@ func FindToken(token string) (*model.Token, error) {
 func GetAllUsers() *[]model.Connection {
 	var userList []model.Connection
 
-	db := GetDatabase()
+	db := commonMongo.GetDatabase()
 	userCollection := db.Collection(UsersCollection)
 	cursor, err := userCollection.Find(context.TODO(), bson.D{})
 	if err == mongo.ErrNoDocuments {
@@ -95,7 +96,7 @@ func GetMessagesForUsers(from, to string, skip int64) *[]model.ChatMessage {
 		},
 	}
 
-	db := GetDatabase()
+	db := commonMongo.GetDatabase()
 	messageCollection := db.Collection(MessageCollection)
 	cursor, err := messageCollection.Find(context.TODO(), full)
 	if err == mongo.ErrNoDocuments {

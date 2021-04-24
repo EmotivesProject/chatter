@@ -10,6 +10,7 @@ import (
 
 	"github.com/TomBowyerResearchProject/common/logger"
 	"github.com/TomBowyerResearchProject/common/middlewares"
+	commonMongo "github.com/TomBowyerResearchProject/common/mongo"
 	"github.com/TomBowyerResearchProject/common/verification"
 	"github.com/joho/godotenv"
 )
@@ -36,7 +37,10 @@ func main() {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
 
-	db.Connect()
+	commonMongo.Connect(commonMongo.Config{
+		URI:    "mongodb://admin:admin@mongo:27017",
+		DBName: db.DBName,
+	})
 
 	go connections.HandleMessages()
 

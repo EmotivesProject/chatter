@@ -4,6 +4,7 @@ import (
 	"chatter/model"
 	"context"
 
+	commonMongo "github.com/TomBowyerResearchProject/common/mongo"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -29,7 +30,7 @@ func CreateToken(token model.Token) (*model.Token, error) {
 }
 
 func insetIntoCollection(collectionName string, document interface{}) (*mongo.InsertOneResult, error) {
-	db := GetDatabase()
+	db := commonMongo.GetDatabase()
 	collection := db.Collection(collectionName)
 	return collection.InsertOne(context.TODO(), document)
 }
