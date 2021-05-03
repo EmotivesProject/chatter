@@ -3,6 +3,7 @@ package connections
 import (
 	"chatter/internal/db"
 	"chatter/model"
+	"errors"
 	"io"
 	"sync"
 
@@ -41,15 +42,16 @@ func NewMessage(message model.ChatMessage) {
 	broadcaster <- message
 }
 
-func FilterOfflineUsers(OfflineUsers []model.Connection) []model.Connection {
+func FilterOfflineUsers(offlineUsers []model.Connection) []model.Connection {
 	mapMutex.Lock()
-	for i, v := range OfflineUsers {
+	for i, v := range offlineUsers {
 		if clients[v.Username] != nil {
-			OfflineUsers[i].Active = true
+			offlineUsers[i].Active = true
 		}
 	}
 	mapMutex.Unlock()
-	return OfflineUsers
+
+	return offlineUsers
 }
 
 func notifyOfConnectionUpdate(username string, active bool) {
@@ -74,13 +76,11 @@ func HandleMessages() {
 }
 
 func messageClients(msg model.ChatMessage) {
-	_, err := db.CreateMessage(msg)
-	if err != nil {
+	if _, err := db.CreateMessage(msg); err != nil {
 		logger.Error(err)
 	}
 
-	to := clients[msg.UsernameTo]
-	if to != nil {
+	if to := clients[msg.UsernameTo]; to != nil {
 		messageClient(to, msg)
 	}
 
@@ -91,14 +91,15 @@ func messageClients(msg model.ChatMessage) {
 }
 
 func messageClient(client *websocket.Conn, msg interface{}) {
-	err := client.WriteJSON(msg)
-	if err != nil && unsafeError(err) {
+	if err := client.WriteJSON(msg); err != nil && unsafeError(err) {
 		logger.Error(err)
+
 		defer client.Close()
+
 		Remove(client)
 	}
 }
 
 func unsafeError(err error) bool {
-	return !websocket.IsCloseError(err, websocket.CloseGoingAway) && err != io.EOF
+	return !websocket.IsCloseError(err, websocket.CloseGoingAway) && !errors.Is(err, io.EOF)
 }

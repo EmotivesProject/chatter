@@ -11,5 +11,6 @@ func DeleteToken(token string) error {
 	db := commonMongo.GetDatabase()
 	tokenCollection := db.Collection(TokensCollection)
 	_, err := tokenCollection.DeleteOne(context.TODO(), bson.M{"token": token})
+
 	return err
 }

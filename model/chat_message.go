@@ -24,5 +24,6 @@ func (c ChatMessage) Validate() bool {
 	if c.Message == "" && c.ImagePath == "" {
 		return false
 	}
+
 	return true
 }

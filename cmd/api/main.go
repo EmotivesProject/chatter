@@ -12,7 +12,6 @@ import (
 	"github.com/TomBowyerResearchProject/common/middlewares"
 	commonMongo "github.com/TomBowyerResearchProject/common/mongo"
 	"github.com/TomBowyerResearchProject/common/verification"
-	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -25,24 +24,21 @@ func main() {
 	middlewares.Init(middlewares.Config{
 		AllowedOrigin:  "*",
 		AllowedMethods: "GET,OPTIONS",
+		// nolint:lll
 		AllowedHeaders: "Accept, Content-Type, Content-Length, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header",
 	})
 
 	router := api.CreateRouter()
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	host := os.Getenv("HOST")
-	port := os.Getenv("PORT")
-
-	commonMongo.Connect(commonMongo.Config{
+	err := commonMongo.Connect(commonMongo.Config{
 		URI:    "mongodb://admin:admin@mongo:27017",
 		DBName: db.DBName,
 	})
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
 	go connections.HandleMessages()
 
-	log.Fatal(http.ListenAndServe(host+":"+port, router))
+	log.Fatal(http.ListenAndServe(os.Getenv("HOST")+":"+os.Getenv("PORT"), router))
 }

@@ -9,7 +9,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ../../:/app
     environment:
-      - BASE_HOST=http://
+      HOST: 0.0.0.0
+      PORT: 80
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.chatter.rule=Host(`chatter.localhost`)"
