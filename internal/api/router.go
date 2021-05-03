@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/TomBowyerResearchProject/common/middlewares"
+	"github.com/TomBowyerResearchProject/common/response"
 	"github.com/TomBowyerResearchProject/common/verification"
 	"github.com/go-chi/chi"
 )
@@ -12,7 +13,7 @@ func CreateRouter() chi.Router {
 	r.Use(middlewares.SimpleMiddleware())
 
 	r.Route("/", func(r chi.Router) {
-		r.Get("/healthz", healthz)
+		r.Get("/healthz", response.Healthz)
 	})
 
 	r.With(verification.VerifyJTW()).Route("/ws_token", func(r chi.Router) {

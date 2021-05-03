@@ -8,7 +8,11 @@ import (
 	"time"
 )
 
-const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const (
+	letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	expiration  = 5
+	tokenLength = 20
+)
 
 func CreateToken(username string, previouslyCalled bool) (model.Token, error) {
 	var token model.Token
@@ -19,8 +23,8 @@ func CreateToken(username string, previouslyCalled bool) (model.Token, error) {
 	}
 
 	// Create and set items for return statement
-	expiration := time.Now().Add(5 * time.Minute).Unix()
-	token.Token = RandStringBytes(20)
+	expiration := time.Now().Add(expiration * time.Minute).Unix()
+	token.Token = RandStringBytes(tokenLength)
 	token.Expiration = expiration
 	token.Username = username
 
@@ -34,7 +38,6 @@ func CreateToken(username string, previouslyCalled bool) (model.Token, error) {
 
 func ValidateToken(token string) (string, error) {
 	tokenObj, err := db.FindToken(token)
-
 	if err != nil {
 		return "", err
 	}
@@ -47,7 +50,9 @@ func ValidateToken(token string) (string, error) {
 func RandStringBytes(n int) string {
 	b := make([]byte, n)
 	for i := range b {
+		// nolint: gosec
 		b[i] = letterBytes[rand.Intn(len(letterBytes))]
 	}
+
 	return string(b)
 }

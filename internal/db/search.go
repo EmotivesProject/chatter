@@ -4,6 +4,7 @@ import (
 	"chatter/internal/messages"
 	"chatter/model"
 	"context"
+	"errors"
 
 	"github.com/TomBowyerResearchProject/common/logger"
 	commonMongo "github.com/TomBowyerResearchProject/common/mongo"
@@ -24,11 +25,13 @@ func FindUser(username string) (*model.User, error) {
 	usersCollection := db.Collection(UsersCollection)
 	err := usersCollection.FindOne(context.TODO(), filter).Decode(&user)
 
-	// Create the user
-	if err == mongo.ErrNoDocuments {
+	// Create the user.
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		userdef, err := CreateUser(username)
+
 		return userdef, err
 	}
+
 	return &user, err
 }
 
@@ -40,10 +43,11 @@ func FindToken(token string) (*model.Token, error) {
 	tokenCollection := db.Collection(TokensCollection)
 	err := tokenCollection.FindOne(context.TODO(), filter).Decode(&tokenObj)
 
-	// Create the user
-	if err == mongo.ErrNoDocuments {
+	// Create the user.
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return &tokenObj, messages.ErrNoToken
 	}
+
 	return &tokenObj, err
 }
 
@@ -52,17 +56,20 @@ func GetAllUsers() *[]model.Connection {
 
 	db := commonMongo.GetDatabase()
 	userCollection := db.Collection(UsersCollection)
+
 	cursor, err := userCollection.Find(context.TODO(), bson.D{})
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return &userList
 	}
 
 	for cursor.Next(context.TODO()) {
-		//Create a value into which the single document can be decoded
+		// Create a value into which the single document can be decoded.
 		var connection model.Connection
+
 		err := cursor.Decode(&connection)
 		if err != nil {
 			logger.Error(err)
+
 			continue
 		}
 
@@ -77,14 +84,18 @@ func GetMessagesForUsers(from, to string, skip int64) *[]model.ChatMessage {
 
 	query := bson.M{
 		"$and": []bson.M{
+			//nolint: gofmt
 			bson.M{"username_from": from},
+			//nolint: gofmt
 			bson.M{"username_to": to},
 		},
 	}
 
 	secondQuery := bson.M{
 		"$and": []bson.M{
+			//nolint: gofmt
 			bson.M{"username_from": to},
+			//nolint: gofmt
 			bson.M{"username_to": from},
 		},
 	}
@@ -98,17 +109,20 @@ func GetMessagesForUsers(from, to string, skip int64) *[]model.ChatMessage {
 
 	db := commonMongo.GetDatabase()
 	messageCollection := db.Collection(MessageCollection)
+
 	cursor, err := messageCollection.Find(context.TODO(), full)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return &chatList
 	}
 
 	for cursor.Next(context.TODO()) {
-		//Create a value into which the single document can be decoded
+		// Create a value into which the single document can be decoded.
 		var chatmessage model.ChatMessage
+
 		err := cursor.Decode(&chatmessage)
 		if err != nil {
 			logger.Error(err)
+
 			continue
 		}
 
