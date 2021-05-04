@@ -31,7 +31,7 @@ func main() {
 	router := api.CreateRouter()
 
 	err := commonMongo.Connect(commonMongo.Config{
-		URI:    "mongodb://admin:admin@mongo:27017",
+		URI:    "mongodb://admin:admin@mongo_db:27017",
 		DBName: db.DBName,
 	})
 	if err != nil {

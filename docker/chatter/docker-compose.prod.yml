@@ -16,32 +16,12 @@ services:
       - "traefik.http.routers.chatter.tls.certresolver=letsencrypt"
       - "traefik.docker.network=traefik"
     restart: unless-stopped
-    depends_on:
-      - "mongo"
     networks:
       traefik:
       default:
       emotives:
         aliases:
           - chatter
-
-  mongo:
-    image: mongo:latest
-    environment:
-      MONGO_INITDB_DATABASE: chatter-db
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin
-    ports:
-      - 27017:27017
-    volumes:
-      - mongodb_data:/data/db
-      - ../../db/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-    restart: unless-stopped
-    networks:
-      default:
-
-volumes:
-  mongodb_data:
 
 networks:
   emotives:
