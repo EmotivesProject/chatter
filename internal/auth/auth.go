@@ -4,6 +4,7 @@ import (
 	"chatter/internal/db"
 	"chatter/internal/messages"
 	"chatter/model"
+	"context"
 	"math/rand"
 	"time"
 )
@@ -14,10 +15,10 @@ const (
 	tokenLength = 20
 )
 
-func CreateToken(username string, previouslyCalled bool) (model.Token, error) {
+func CreateToken(ctx context.Context, username string, previouslyCalled bool) (model.Token, error) {
 	var token model.Token
 
-	_, err := db.FindUser(username)
+	_, err := db.FindUser(ctx, username)
 	if err != nil {
 		return token, messages.ErrFailedUsername
 	}
@@ -28,7 +29,7 @@ func CreateToken(username string, previouslyCalled bool) (model.Token, error) {
 	token.Expiration = expiration
 	token.Username = username
 
-	_, err = db.CreateToken(token)
+	_, err = db.CreateToken(ctx, token)
 	if err != nil {
 		return token, err
 	}
@@ -36,13 +37,13 @@ func CreateToken(username string, previouslyCalled bool) (model.Token, error) {
 	return token, nil
 }
 
-func ValidateToken(token string) (string, error) {
-	tokenObj, err := db.FindToken(token)
+func ValidateToken(ctx context.Context, token string) (string, error) {
+	tokenObj, err := db.FindToken(ctx, token)
 	if err != nil {
 		return "", err
 	}
 
-	err = db.DeleteToken(tokenObj.Token)
+	err = db.DeleteToken(ctx, tokenObj.Token)
 
 	return tokenObj.Username, err
 }

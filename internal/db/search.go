@@ -17,17 +17,17 @@ const (
 	PageLimit = 20
 )
 
-func FindUser(username string) (*model.User, error) {
+func FindUser(ctx context.Context, username string) (*model.User, error) {
 	user := model.User{}
 	filter := bson.D{primitive.E{Key: "username", Value: username}}
 
 	db := commonMongo.GetDatabase()
 	usersCollection := db.Collection(UsersCollection)
-	err := usersCollection.FindOne(context.TODO(), filter).Decode(&user)
+	err := usersCollection.FindOne(ctx, filter).Decode(&user)
 
 	// Create the user.
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		userdef, err := CreateUser(username)
+		userdef, err := CreateUser(ctx, username)
 
 		return userdef, err
 	}
@@ -35,13 +35,13 @@ func FindUser(username string) (*model.User, error) {
 	return &user, err
 }
 
-func FindToken(token string) (*model.Token, error) {
+func FindToken(ctx context.Context, token string) (*model.Token, error) {
 	tokenObj := model.Token{}
 	filter := bson.D{primitive.E{Key: "token", Value: token}}
 
 	db := commonMongo.GetDatabase()
 	tokenCollection := db.Collection(TokensCollection)
-	err := tokenCollection.FindOne(context.TODO(), filter).Decode(&tokenObj)
+	err := tokenCollection.FindOne(ctx, filter).Decode(&tokenObj)
 
 	// Create the user.
 	if errors.Is(err, mongo.ErrNoDocuments) {
@@ -51,18 +51,18 @@ func FindToken(token string) (*model.Token, error) {
 	return &tokenObj, err
 }
 
-func GetAllUsers() *[]model.Connection {
+func GetAllUsers(ctx context.Context) *[]model.Connection {
 	var userList []model.Connection
 
 	db := commonMongo.GetDatabase()
 	userCollection := db.Collection(UsersCollection)
 
-	cursor, err := userCollection.Find(context.TODO(), bson.D{})
+	cursor, err := userCollection.Find(ctx, bson.D{})
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		return &userList
 	}
 
-	for cursor.Next(context.TODO()) {
+	for cursor.Next(ctx) {
 		// Create a value into which the single document can be decoded.
 		var connection model.Connection
 
@@ -79,7 +79,7 @@ func GetAllUsers() *[]model.Connection {
 	return &userList
 }
 
-func GetMessagesForUsers(from, to string, skip int64) *[]model.ChatMessage {
+func GetMessagesForUsers(ctx context.Context, from, to string, skip int64) *[]model.ChatMessage {
 	var chatList []model.ChatMessage
 
 	query := bson.M{
@@ -110,12 +110,12 @@ func GetMessagesForUsers(from, to string, skip int64) *[]model.ChatMessage {
 	db := commonMongo.GetDatabase()
 	messageCollection := db.Collection(MessageCollection)
 
-	cursor, err := messageCollection.Find(context.TODO(), full)
+	cursor, err := messageCollection.Find(ctx, full)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		return &chatList
 	}
 
-	for cursor.Next(context.TODO()) {
+	for cursor.Next(ctx) {
 		// Create a value into which the single document can be decoded.
 		var chatmessage model.ChatMessage
 

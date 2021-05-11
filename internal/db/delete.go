@@ -7,10 +7,10 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func DeleteToken(token string) error {
+func DeleteToken(ctx context.Context, token string) error {
 	db := commonMongo.GetDatabase()
 	tokenCollection := db.Collection(TokensCollection)
-	_, err := tokenCollection.DeleteOne(context.TODO(), bson.M{"token": token})
+	_, err := tokenCollection.DeleteOne(ctx, bson.M{"token": token})
 
 	return err
 }

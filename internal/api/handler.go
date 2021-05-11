@@ -29,7 +29,7 @@ func createTocken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := auth.CreateToken(username, false)
+	token, err := auth.CreateToken(r.Context(), username, false)
 	if err != nil {
 		logger.Error(err)
 		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: err.Error()})
@@ -42,7 +42,7 @@ func createTocken(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
-	username, err := auth.ValidateToken(r.URL.Query().Get("token"))
+	username, err := auth.ValidateToken(r.Context(), r.URL.Query().Get("token"))
 	if err != nil {
 		logger.Error(err)
 		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: err.Error()})
@@ -77,7 +77,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 func getConnectedUsers(w http.ResponseWriter, r *http.Request) {
-	offline := db.GetAllUsers()
+	offline := db.GetAllUsers(r.Context())
 	cons := connections.FilterOfflineUsers(*offline)
 	response.ResultResponseJSON(w, http.StatusOK, cons)
 }
@@ -94,6 +94,6 @@ func getMessages(w http.ResponseWriter, r *http.Request) {
 
 	to := r.URL.Query().Get("to")
 	skip := findSkip(r)
-	messages := db.GetMessagesForUsers(from, to, skip)
+	messages := db.GetMessagesForUsers(r.Context(), from, to, skip)
 	response.ResultResponseJSON(w, http.StatusOK, messages)
 }
