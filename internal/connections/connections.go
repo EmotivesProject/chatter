@@ -3,6 +3,7 @@ package connections
 import (
 	"chatter/internal/db"
 	"chatter/model"
+	"context"
 	"errors"
 	"io"
 	"sync"
@@ -76,7 +77,7 @@ func HandleMessages() {
 }
 
 func messageClients(msg model.ChatMessage) {
-	if _, err := db.CreateMessage(msg); err != nil {
+	if _, err := db.CreateMessage(context.Background(), msg); err != nil {
 		logger.Error(err)
 	}
 
