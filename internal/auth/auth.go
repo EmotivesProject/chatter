@@ -5,12 +5,12 @@ import (
 	"chatter/internal/messages"
 	"chatter/model"
 	"context"
-	"math/rand"
+	"crypto/rand"
+	"encoding/base64"
 	"time"
 )
 
 const (
-	letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	expiration  = 5
 	tokenLength = 20
 )
@@ -23,9 +23,14 @@ func CreateToken(ctx context.Context, username string, previouslyCalled bool) (m
 		return token, messages.ErrFailedUsername
 	}
 
+	generatedToken, err := generateRandomString(tokenLength)
+	if err != nil {
+		return token, err
+	}
+
 	// Create and set items for return statement
 	expiration := time.Now().Add(expiration * time.Minute).Unix()
-	token.Token = RandStringBytes(tokenLength)
+	token.Token = generatedToken
 	token.Expiration = expiration
 	token.Username = username
 
@@ -48,12 +53,16 @@ func ValidateToken(ctx context.Context, token string) (string, error) {
 	return tokenObj.Username, err
 }
 
-func RandStringBytes(n int) string {
+func generateRandomBytes(n int) ([]byte, error) {
 	b := make([]byte, n)
-	for i := range b {
-		// nolint: gosec
-		b[i] = letterBytes[rand.Intn(len(letterBytes))]
-	}
 
-	return string(b)
+	_, err := rand.Read(b)
+
+	return b, err
+}
+
+func generateRandomString(s int) (string, error) {
+	b, err := generateRandomBytes(s)
+
+	return base64.URLEncoding.EncodeToString(b), err
 }
