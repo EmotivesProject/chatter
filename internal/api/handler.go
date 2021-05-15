@@ -38,7 +38,7 @@ func createTocken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	logger.Infof("Created token for user %s", username)
-	response.ResultResponseJSON(w, http.StatusOK, token)
+	response.ResultResponseJSON(w, http.StatusCreated, token)
 }
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
