@@ -11,6 +11,7 @@ require (
 	github.com/TomBowyerResearchProject/common/verification v0.0.0-20210502220302-f43ac396e165
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/gorilla/websocket v1.4.2
+	github.com/stretchr/testify v1.7.0
 	go.mongodb.org/mongo-driver v1.5.2
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 )
