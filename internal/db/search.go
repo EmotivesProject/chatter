@@ -82,21 +82,23 @@ func GetAllUsers(ctx context.Context) *[]model.Connection {
 func GetMessagesForUsers(ctx context.Context, from, to string, skip int64) *[]model.ChatMessage {
 	var chatList []model.ChatMessage
 
+	fromQueryfrom := bson.M{"username_from": from}
+	fromQueryTo := bson.M{"username_to": to}
+
+	toQueryfrom := bson.M{"username_from": to}
+	toQueryTo := bson.M{"username_to": from}
+
 	query := bson.M{
 		"$and": []bson.M{
-			//nolint: gofmt
-			bson.M{"username_from": from},
-			//nolint: gofmt
-			bson.M{"username_to": to},
+			fromQueryfrom,
+			fromQueryTo,
 		},
 	}
 
 	secondQuery := bson.M{
 		"$and": []bson.M{
-			//nolint: gofmt
-			bson.M{"username_from": to},
-			//nolint: gofmt
-			bson.M{"username_to": from},
+			toQueryfrom,
+			toQueryTo,
 		},
 	}
 
