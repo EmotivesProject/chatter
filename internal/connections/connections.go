@@ -77,6 +77,7 @@ func HandleMessages() {
 }
 
 func messageClients(msg model.ChatMessage) {
+	logger.Info("Sending message to clients")
 	if _, err := db.CreateMessage(context.Background(), msg); err != nil {
 		logger.Error(err)
 	}
