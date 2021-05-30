@@ -77,18 +77,20 @@ func HandleMessages() {
 }
 
 func messageClients(msg model.ChatMessage) {
-	logger.Info("Sending message to clients")
+	logger.Infof("Sending message to clients %s", msg.Message)
 
 	if _, err := db.CreateMessage(context.Background(), msg); err != nil {
 		logger.Error(err)
 	}
 
 	if to := clients[msg.UsernameTo]; to != nil {
+		logger.Infof("Sending message to %s", msg.UsernameTo)
 		messageClient(to, msg)
 	}
 
 	from := clients[msg.UsernameFrom]
 	if from != nil {
+		logger.Infof("Sending message from %s", msg.UsernameFrom)
 		messageClient(from, msg)
 	}
 }
