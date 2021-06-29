@@ -57,16 +57,12 @@ func main() {
 
 	go func() {
 		sigint := make(chan os.Signal, 1)
-
 		signal.Notify(sigint, os.Interrupt, syscall.SIGTERM)
-
 		<-sigint
 
 		logger.Infof("Shutting down server")
 
-		// We received an interrupt signal, shut down.
 		if err := srv.Shutdown(context.Background()); err != nil {
-			// Error from closing listeners, or context timeout:
 			logger.Infof("HTTP server Shutdown: %v", err)
 		}
 
@@ -76,14 +72,12 @@ func main() {
 		}
 
 		logger.Infof("mongo disconnected")
-
 		close(idleConnsClosed)
 	}()
 
 	logger.Info("Starting Server")
 
 	if err := srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		// Error starting or closing listener:
 		logger.Infof("HTTP server ListenAndServe: %v", err)
 	}
 
