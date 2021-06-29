@@ -72,7 +72,7 @@ func main() {
 
 		monogodb := commonMongo.GetDatabase()
 		if monogodb != nil {
-			monogodb.Client().Disconnect(context.Background())
+			_ = monogodb.Client().Disconnect(context.Background())
 		}
 
 		logger.Infof("mongo disconnected")
