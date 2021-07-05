@@ -73,7 +73,7 @@ func TestRouterWS(t *testing.T) {
 
 	r, _, _ := commonTest.CompleteTestRequest(t, req)
 
-	assert.EqualValues(t, r.StatusCode, http.StatusBadRequest)
+	assert.EqualValues(t, r.StatusCode, http.StatusForbidden)
 
 	test.TearDownIntegrationTest()
 }
