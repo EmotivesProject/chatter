@@ -24,7 +24,12 @@ func createTocken(w http.ResponseWriter, r *http.Request) {
 	username, ok := r.Context().Value(verification.UserID).(string)
 	if !ok {
 		logger.Error(messages.ErrFailedToType)
-		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: messages.ErrFailedToType.Error()})
+		response.MessageResponseJSON(
+			w,
+			false,
+			http.StatusInternalServerError,
+			response.Message{Message: messages.ErrFailedToType.Error()},
+		)
 
 		return
 	}
@@ -32,20 +37,20 @@ func createTocken(w http.ResponseWriter, r *http.Request) {
 	token, err := auth.CreateToken(r.Context(), username, false)
 	if err != nil {
 		logger.Error(err)
-		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: err.Error()})
+		response.MessageResponseJSON(w, false, http.StatusUnprocessableEntity, response.Message{Message: err.Error()})
 
 		return
 	}
 
 	logger.Infof("Created token for user %s", username)
-	response.ResultResponseJSON(w, http.StatusCreated, token)
+	response.ResultResponseJSON(w, false, http.StatusCreated, token)
 }
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
 	username, err := auth.ValidateToken(r.Context(), r.URL.Query().Get("token"))
 	if err != nil {
 		logger.Error(err)
-		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: err.Error()})
+		response.MessageResponseJSON(w, false, http.StatusForbidden, response.Message{Message: err.Error()})
 
 		return
 	}
@@ -53,7 +58,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		logger.Error(err)
-		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: err.Error()})
+		response.MessageResponseJSON(w, false, http.StatusInternalServerError, response.Message{Message: err.Error()})
 
 		return
 	}
@@ -79,7 +84,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 func getConnectedUsers(w http.ResponseWriter, r *http.Request) {
 	offline := db.GetAllUsers(r.Context())
 	cons := connections.FilterOfflineUsers(*offline)
-	response.ResultResponseJSON(w, http.StatusOK, cons)
+	response.ResultResponseJSON(w, false, http.StatusOK, cons)
 }
 
 func getMessages(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +92,12 @@ func getMessages(w http.ResponseWriter, r *http.Request) {
 
 	from := r.URL.Query().Get("from")
 	if username != from {
-		response.MessageResponseJSON(w, http.StatusBadRequest, response.Message{Message: messages.WrongResponse})
+		response.MessageResponseJSON(
+			w,
+			false,
+			http.StatusUnprocessableEntity,
+			response.Message{Message: messages.WrongResponse},
+		)
 
 		return
 	}
@@ -95,5 +105,5 @@ func getMessages(w http.ResponseWriter, r *http.Request) {
 	to := r.URL.Query().Get("to")
 	skip := findSkip(r)
 	messages := db.GetMessagesForUsers(r.Context(), from, to, skip)
-	response.ResultResponseJSON(w, http.StatusOK, messages)
+	response.ResultResponseJSON(w, false, http.StatusOK, messages)
 }
