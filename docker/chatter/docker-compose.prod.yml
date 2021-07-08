@@ -9,6 +9,8 @@ services:
     environment:
       HOST: 0.0.0.0
       PORT: 80
+    logging:
+      driver: syslog
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.chatter.rule=Host(`chatter.emotives.net`)"
