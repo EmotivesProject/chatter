@@ -17,6 +17,8 @@ github.com/TomBowyerResearchProject/common/test v0.0.0-20210705095908-1547602280
 github.com/TomBowyerResearchProject/common/test v0.0.0-20210705095908-154760228061/go.mod h1:Gd8oCpA/4+/d7KArlGpxXLAZD29xd/0ENhBAIVWx+kk=
 github.com/TomBowyerResearchProject/common/verification v0.0.0-20210705095908-154760228061 h1:QJMyOJiYn5cWuiqlapqcTf4ni7D1oF1u+vBGm9fB77c=
 github.com/TomBowyerResearchProject/common/verification v0.0.0-20210705095908-154760228061/go.mod h1:YPfkh9+X2otzcpoLCXG55wWDExoPpUe70jROtADGKVw=
+github.com/TomBowyerResearchProject/common/verification v0.0.0-20210709105607-257260c9085d h1:RLA2534z3Bv4mZkn6DNTWzkBTRx8MJOiqHSaB3QaHoo=
+github.com/TomBowyerResearchProject/common/verification v0.0.0-20210709105607-257260c9085d/go.mod h1:YPfkh9+X2otzcpoLCXG55wWDExoPpUe70jROtADGKVw=
 github.com/aws/aws-sdk-go v1.34.28/go.mod h1:H7NKnBqNVzoTJpGfLrQkkD+ytBA93eiDYi/+8rV9s48=
 github.com/aws/aws-sdk-go v1.38.25 h1:aNjeh7+MON05cZPtZ6do+KxVT67jPOSQXANA46gOQao=
 github.com/aws/aws-sdk-go v1.38.25/go.mod h1:hcU610XS61/+aQV88ixoOzUoG7v3b31pl2zKMmprdro=
