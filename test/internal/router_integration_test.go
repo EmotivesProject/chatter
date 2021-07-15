@@ -37,6 +37,7 @@ func TestRouterMessages(t *testing.T) {
 	username2, _ := commonTest.CreateNewUser(t, "http://0.0.0.0:8082/user")
 
 	db.CreateUser(context.Background(), username)
+	db.CreateUser(context.Background(), username2)
 
 	url := fmt.Sprintf("%s/messages?to=%s&from=%s", test.TS.URL, username2, username)
 
