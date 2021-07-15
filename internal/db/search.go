@@ -35,6 +35,17 @@ func FindUser(ctx context.Context, username string) (*model.User, error) {
 	return &user, err
 }
 
+func FindUserNoCreate(ctx context.Context, username string) (*model.User, error) {
+	user := model.User{}
+	filter := bson.D{primitive.E{Key: "username", Value: username}}
+
+	db := commonMongo.GetDatabase()
+	usersCollection := db.Collection(UsersCollection)
+	err := usersCollection.FindOne(ctx, filter).Decode(&user)
+
+	return &user, err
+}
+
 func FindToken(ctx context.Context, token string) (*model.Token, error) {
 	tokenObj := model.Token{}
 	filter := bson.D{primitive.E{Key: "token", Value: token}}

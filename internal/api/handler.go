@@ -103,6 +103,17 @@ func getMessages(w http.ResponseWriter, r *http.Request) {
 	}
 
 	to := r.URL.Query().Get("to")
+
+	_, err := db.FindUserNoCreate(r.Context(), to)
+	if err != nil {
+		response.MessageResponseJSON(
+			w,
+			false,
+			http.StatusUnprocessableEntity,
+			response.Message{Message: messages.WrongResponse},
+		)
+	}
+
 	skip := findSkip(r)
 	messages := db.GetMessagesForUsers(r.Context(), from, to, skip)
 	response.ResultResponseJSON(w, false, http.StatusOK, messages)
