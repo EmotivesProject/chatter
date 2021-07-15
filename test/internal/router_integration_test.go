@@ -3,7 +3,9 @@
 package api_test
 
 import (
+	"chatter/internal/db"
 	"chatter/test"
+	"context"
 	"fmt"
 	"net/http"
 	"testing"
@@ -31,6 +33,8 @@ func TestRouterMessages(t *testing.T) {
 	test.SetUpIntegrationTest()
 
 	username, token := commonTest.CreateNewUser(t, "http://0.0.0.0:8082/user")
+
+	db.CreateUser(context.Background(), username)
 
 	url := fmt.Sprintf("%s/messages?to=%s&from=%s", test.TS.URL, "tom", username)
 
