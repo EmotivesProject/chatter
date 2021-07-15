@@ -34,9 +34,11 @@ func TestRouterMessages(t *testing.T) {
 
 	username, token := commonTest.CreateNewUser(t, "http://0.0.0.0:8082/user")
 
+	username2, _ := commonTest.CreateNewUser(t, "http://0.0.0.0:8082/user")
+
 	db.CreateUser(context.Background(), username)
 
-	url := fmt.Sprintf("%s/messages?to=%s&from=%s", test.TS.URL, "tom", username)
+	url := fmt.Sprintf("%s/messages?to=%s&from=%s", test.TS.URL, username2, username)
 
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Authorization", token)
