@@ -2,6 +2,7 @@ package connections
 
 import (
 	"chatter/internal/db"
+	"chatter/internal/send"
 	"chatter/model"
 	"context"
 	"errors"
@@ -78,6 +79,8 @@ func HandleMessages() {
 
 func messageClients(msg model.ChatMessage) {
 	logger.Infof("Sending message to clients %s", msg.Message)
+
+	send.MessageNotification(msg.UsernameFrom, msg.UsernameTo)
 
 	if _, err := db.CreateMessage(context.Background(), msg); err != nil {
 		logger.Error(err)

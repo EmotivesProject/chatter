@@ -25,7 +25,7 @@ func main() {
 	logger.InitLogger("chatter")
 
 	verification.Init(verification.VerificationConfig{
-		VerificationURL: "http://uacl/authorize",
+		VerificationURL: os.Getenv("VERIFICATION_URL"),
 	})
 
 	middlewares.Init(middlewares.Config{

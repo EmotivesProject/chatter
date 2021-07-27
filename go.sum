@@ -1,5 +1,6 @@
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+github.com/TomBowyerResearchProject/common v1.0.0 h1:fUe9NdA35Krgun7g6jctYv1H7oBzQiOE2E0QvvH5st0=
 github.com/TomBowyerResearchProject/common/logger v0.0.0-20210415085024-5081280e07de/go.mod h1:HxQH9yD6ypU+/pHdDaPWsTezIqaqgvzBzeTuo+zwRLc=
 github.com/TomBowyerResearchProject/common/logger v0.0.0-20210417015643-04e74c7fb06d/go.mod h1:HxQH9yD6ypU+/pHdDaPWsTezIqaqgvzBzeTuo+zwRLc=
 github.com/TomBowyerResearchProject/common/logger v0.0.0-20210424013532-4411be89261b/go.mod h1:HxQH9yD6ypU+/pHdDaPWsTezIqaqgvzBzeTuo+zwRLc=
@@ -9,6 +10,8 @@ github.com/TomBowyerResearchProject/common/middlewares v0.0.0-20210705095908-154
 github.com/TomBowyerResearchProject/common/middlewares v0.0.0-20210705095908-154760228061/go.mod h1:p/Ed6RvbJ4tMjVLY3wUahMeeC441aKl1CB23FTnPAWo=
 github.com/TomBowyerResearchProject/common/mongo v0.0.0-20210705095908-154760228061 h1:MACRQyu1A5n7wFeFpfPkSuSjtBGrIYp1C5VhVQaAJf8=
 github.com/TomBowyerResearchProject/common/mongo v0.0.0-20210705095908-154760228061/go.mod h1:6OnxIwYLYCS0JAuPK1WFN/nU+GdXT2ci57sG5OILWU4=
+github.com/TomBowyerResearchProject/common/notification v0.0.0-20210709105607-257260c9085d h1:sWDGz4Iw849QJ9q1ldJqA3HR1fUW8hWUgOv+dG2TgXY=
+github.com/TomBowyerResearchProject/common/notification v0.0.0-20210709105607-257260c9085d/go.mod h1:MwzK5wynS2gnRbCIsxdix47ZD1CFW1YLtF9BC7tShXY=
 github.com/TomBowyerResearchProject/common/response v0.0.0-20210508000653-21ba51f2b2ba/go.mod h1:fib988ehDtUcBwwwNhHWjQSSruMEEMCLb5QZnfyWU84=
 github.com/TomBowyerResearchProject/common/response v0.0.0-20210705074431-12706ef7b706/go.mod h1:fib988ehDtUcBwwwNhHWjQSSruMEEMCLb5QZnfyWU84=
 github.com/TomBowyerResearchProject/common/response v0.0.0-20210705095908-154760228061 h1:tYV+97lg8++buuhji0IUQKwwwWiV4pFlLh1iyny5wGM=
