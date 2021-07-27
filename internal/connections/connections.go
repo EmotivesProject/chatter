@@ -80,7 +80,7 @@ func HandleMessages() {
 func messageClients(msg model.ChatMessage) {
 	logger.Infof("Sending message to clients %s", msg.Message)
 
-	send.MessageNotification(msg.UsernameFrom, msg.UsernameTo)
+	send.MessageNotification(msg.UsernameFrom, msg.UsernameTo, msg.Message)
 
 	if _, err := db.CreateMessage(context.Background(), msg); err != nil {
 		logger.Error(err)

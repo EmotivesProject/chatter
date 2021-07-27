@@ -12,6 +12,7 @@ services:
       VERIFICATION_URL: http://uacl/authorize
       NOTIFICATION_URL: http://notif/internal_notification
       EMOTIVES_URL: https://emotives.net/
+      NOTIFICATION_AUTH: qutSecret
     logging:
       driver: syslog
     labels:
