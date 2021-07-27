@@ -6,6 +6,7 @@ require (
 	github.com/TomBowyerResearchProject/common/logger v0.0.0-20210705095908-154760228061
 	github.com/TomBowyerResearchProject/common/middlewares v0.0.0-20210705095908-154760228061
 	github.com/TomBowyerResearchProject/common/mongo v0.0.0-20210705095908-154760228061
+	github.com/TomBowyerResearchProject/common/notification v0.0.0-20210709105607-257260c9085d
 	github.com/TomBowyerResearchProject/common/response v0.0.0-20210705095908-154760228061
 	github.com/TomBowyerResearchProject/common/test v0.0.0-20210705095908-154760228061
 	github.com/TomBowyerResearchProject/common/verification v0.0.0-20210709105607-257260c9085d

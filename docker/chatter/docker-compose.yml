@@ -11,6 +11,10 @@ services:
     environment:
       HOST: 0.0.0.0
       PORT: 80
+      VERIFICATION_URL: http://uacl/authorize
+      NOTIFICATION_URL: http://notif/internal_notification
+      EMOTIVES_URL: http://localhost/
+      NOTIFICATION_AUTH: qutSecret
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.chatter.rule=Host(`chatter.localhost`)"

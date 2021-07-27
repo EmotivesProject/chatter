@@ -9,6 +9,9 @@ services:
     environment:
       HOST: 0.0.0.0
       PORT: 80
+      VERIFICATION_URL: http://uacl/authorize
+      NOTIFICATION_URL: http://notif/internal_notification
+      EMOTIVES_URL: https://emotives.net/
     logging:
       driver: syslog
     labels:
