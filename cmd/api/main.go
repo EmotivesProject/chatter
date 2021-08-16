@@ -25,7 +25,8 @@ func main() {
 	logger.InitLogger("chatter")
 
 	verification.Init(verification.VerificationConfig{
-		VerificationURL: os.Getenv("VERIFICATION_URL"),
+		VerificationURL:     os.Getenv("VERIFICATION_URL"),
+		AuthorizationSecret: "chatterSecret",
 	})
 
 	middlewares.Init(middlewares.Config{

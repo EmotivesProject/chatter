@@ -6,6 +6,7 @@ import (
 	"chatter/internal/db"
 	"chatter/internal/messages"
 	"chatter/model"
+	"encoding/json"
 	"net/http"
 
 	"github.com/TomBowyerResearchProject/common/logger"
@@ -18,6 +19,29 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
+}
+
+func createUser(w http.ResponseWriter, r *http.Request) {
+	user := model.User{}
+
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		logger.Error(err)
+		response.MessageResponseJSON(w, false, http.StatusBadRequest, response.Message{Message: err.Error()})
+
+		return
+	}
+
+	_, err = db.CreateUser(r.Context(), user.Username)
+	if err != nil {
+		logger.Error(err)
+		response.MessageResponseJSON(w, false, http.StatusBadRequest, response.Message{Message: err.Error()})
+
+		return
+	}
+
+	logger.Infof("Created user %s", user.Username)
+	response.MessageResponseJSON(w, false, http.StatusCreated, response.Message{Message: "Created user"})
 }
 
 func createTocken(w http.ResponseWriter, r *http.Request) {
