@@ -14,10 +14,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const uaclCreateUserEndpoint = "http://0.0.0.0:8082/user"
+
 func TestRouterCreateToken(t *testing.T) {
 	test.SetUpIntegrationTest()
 
-	_, token := commonTest.CreateNewUser(t, "http://0.0.0.0:8082/user")
+	_, token := commonTest.CreateNewUser(t, uaclCreateUserEndpoint)
 
 	req, _ := http.NewRequest("GET", test.TS.URL+"/ws_token", nil)
 	req.Header.Add("Authorization", token)
@@ -32,9 +34,9 @@ func TestRouterCreateToken(t *testing.T) {
 func TestRouterMessages(t *testing.T) {
 	test.SetUpIntegrationTest()
 
-	username, token := commonTest.CreateNewUser(t, "http://0.0.0.0:8082/user")
+	username, token := commonTest.CreateNewUser(t, uaclCreateUserEndpoint)
 
-	username2, _ := commonTest.CreateNewUser(t, "http://0.0.0.0:8082/user")
+	username2, _ := commonTest.CreateNewUser(t, uaclCreateUserEndpoint)
 
 	db.CreateUser(context.Background(), username)
 	db.CreateUser(context.Background(), username2)
@@ -54,7 +56,7 @@ func TestRouterMessages(t *testing.T) {
 func TestRouterConnected(t *testing.T) {
 	test.SetUpIntegrationTest()
 
-	_, token := commonTest.CreateNewUser(t, "http://0.0.0.0:8082/user")
+	_, token := commonTest.CreateNewUser(t, uaclCreateUserEndpoint)
 
 	url := fmt.Sprintf("%s/connections", test.TS.URL)
 
@@ -71,7 +73,7 @@ func TestRouterConnected(t *testing.T) {
 func TestRouterWS(t *testing.T) {
 	test.SetUpIntegrationTest()
 
-	username, token := commonTest.CreateNewUser(t, "http://0.0.0.0:8082/user")
+	username, token := commonTest.CreateNewUser(t, uaclCreateUserEndpoint)
 
 	url := fmt.Sprintf("%s/ws?token=%s", test.TS.URL, username)
 

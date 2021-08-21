@@ -33,10 +33,10 @@ func Add(ws *websocket.Conn, username string) {
 func Remove(ws *websocket.Conn) {
 	mapMutex.Lock()
 	username := connections[ws]
-	logger.Infof("removing %s", username) // shouldn't be logging in a mutex lock
 	delete(connections, ws)
 	delete(clients, username)
 	mapMutex.Unlock()
+	logger.Infof("removed %s", username)
 	notifyOfConnectionUpdate(username, false)
 }
 
