@@ -18,7 +18,7 @@ jobs:
         run: ./scripts/build.sh
       - name: Log in and push
         run: |
-          echo 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 | docker login ghcr.io -u imthetom --password-stdin
+          echo ${{ secrets.GITHUBTOKEN }} | docker login ghcr.io -u imthetom --password-stdin
           docker push ghcr.io/tombowyerresearchproject/chatter_api:latest
       - name: Connect and deploy
         uses: appleboy/ssh-action@master
@@ -28,7 +28,7 @@ jobs:
           password: Github123
           port: 22
           script: |
-            echo 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 | docker login ghcr.io -u imthetom --password-stdin
+            echo ${{ secrets.GITHUBTOKEN }} | docker login ghcr.io -u imthetom --password-stdin
             docker pull ghcr.io/tombowyerresearchproject/chatter_api:latest
             rm -R chatter
             git clone git@github.com:TomBowyerResearchProject/chatter.git
