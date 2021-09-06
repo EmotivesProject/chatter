@@ -11,7 +11,7 @@ services:
       PORT: 80
       VERIFICATION_URL: http://uacl/authorize
       NOTIFICATION_URL: http://notif/internal_notification
-      EMOTIVES_URL: https://emotives.net/
+      EMOTIVES_URL: https://www.emotives.net/
       NOTIFICATION_AUTH: qutSecret
     logging:
       driver: syslog
