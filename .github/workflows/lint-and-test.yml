@@ -23,6 +23,8 @@ jobs:
     - name: Test
       run: make test
     - name: Integration tests
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
       run: |
-      echo ${{ secrets.GITHUBTOKEN }} | docker login ghcr.io -u imthetom --password-stdin
-      make integration SLEEP_TIME=10
+        echo $GITHUB_TOKEN | docker login ghcr.io -u imthetom --password-stdin
+        make integration SLEEP_TIME=10
