@@ -23,4 +23,6 @@ jobs:
     - name: Test
       run: make test
     - name: Integration tests
-      run: make integration SLEEP_TIME=10
+      run: |
+      echo ${{ secrets.GITHUBTOKEN }} | docker login ghcr.io -u imthetom --password-stdin
+      make integration SLEEP_TIME=10
