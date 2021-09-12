@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http/httptest"
+	"os"
 	"time"
 
 	"github.com/TomBowyerResearchProject/common/logger"
@@ -18,7 +19,11 @@ var TS *httptest.Server
 func SetUpIntegrationTest() {
 	rand.Seed(time.Now().Unix())
 
-	logger.InitLogger("chatter")
+	logger.InitLogger("chatter", logger.EmailConfig{
+		From:     os.Getenv("EMAIL_FROM"),
+		Password: os.Getenv("EMAIL_PASSWORD"),
+		Level:    os.Getenv("EMAIL_LEVEL"),
+	})
 
 	verification.Init(verification.VerificationConfig{
 		VerificationURL: "http://0.0.0.0:8082/authorize",

@@ -13,6 +13,9 @@ services:
       NOTIFICATION_URL: http://notif/internal_notification
       EMOTIVES_URL: https://www.emotives.net/
       NOTIFICATION_AUTH: qutSecret
+      EMAIL_FROM: emotives.acc@gmail.com
+      EMAIL_PASSWORD: qutSecret123
+      EMAIL_LEVEL: PROD
     logging:
       driver: syslog
     labels:
