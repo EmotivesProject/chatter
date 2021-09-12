@@ -22,30 +22,7 @@ import (
 const timeBeforeTimeout = 15
 
 func main() {
-	logger.InitLogger("chatter", logger.EmailConfig{
-		From:     os.Getenv("EMAIL_FROM"),
-		Password: os.Getenv("EMAIL_PASSWORD"),
-		Level:    os.Getenv("EMAIL_LEVEL"),
-	})
-
-	verification.Init(verification.VerificationConfig{
-		VerificationURL:     os.Getenv("VERIFICATION_URL"),
-		AuthorizationSecret: "chatterSecret",
-	})
-
-	middlewares.Init(middlewares.Config{
-		AllowedOrigin:  "*",
-		AllowedMethods: "GET,OPTIONS",
-		AllowedHeaders: "*",
-	})
-
-	err := commonMongo.Connect(commonMongo.Config{
-		URI:    "mongodb://admin:admin@mongo_db:27017",
-		DBName: db.DBName,
-	})
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	initServices()
 
 	go connections.HandleMessages()
 
@@ -87,4 +64,31 @@ func main() {
 	}
 
 	<-idleConnsClosed
+}
+
+func initServices() {
+	logger.InitLogger("chatter", logger.EmailConfig{
+		From:     os.Getenv("EMAIL_FROM"),
+		Password: os.Getenv("EMAIL_PASSWORD"),
+		Level:    os.Getenv("EMAIL_LEVEL"),
+	})
+
+	verification.Init(verification.VerificationConfig{
+		VerificationURL:     os.Getenv("VERIFICATION_URL"),
+		AuthorizationSecret: "chatterSecret",
+	})
+
+	middlewares.Init(middlewares.Config{
+		AllowedOrigin:  "*",
+		AllowedMethods: "GET,OPTIONS",
+		AllowedHeaders: "*",
+	})
+
+	err := commonMongo.Connect(commonMongo.Config{
+		URI:    "mongodb://admin:admin@mongo_db:27017",
+		DBName: db.DBName,
+	})
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 }
