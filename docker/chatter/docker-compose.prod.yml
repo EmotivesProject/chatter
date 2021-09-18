@@ -14,7 +14,7 @@ services:
       EMOTIVES_URL: https://www.emotives.net/
       NOTIFICATION_AUTH: qutSecret
       EMAIL_FROM: emotives.acc@gmail.com
-      EMAIL_PASSWORD: qutSecret123
+      EMAIL_PASSWORD: "${GMAIL_PASSWORD:-}"
       EMAIL_LEVEL: PROD
     logging:
       driver: syslog
