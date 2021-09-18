@@ -38,4 +38,4 @@ jobs:
             rm -R chatter
             git clone git@github.com:TomBowyerResearchProject/chatter.git
             cd chatter
-            ./scripts/start.sh prod
+            ./scripts/start.sh prod no $GMAIL_PASSWORD
