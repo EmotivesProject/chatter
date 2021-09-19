@@ -79,9 +79,9 @@ func initServices() {
 	})
 
 	middlewares.Init(middlewares.Config{
-		AllowedOrigin:  "*",
-		AllowedMethods: "GET,OPTIONS",
-		AllowedHeaders: "*",
+		AllowedOrigins: os.Getenv("ALLOWED_ORIGINS"),
+		AllowedMethods: "GET,POST,OPTIONS,DELETE",
+		AllowedHeaders: "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, X-CSRF-Token",
 	})
 
 	err := commonMongo.Connect(commonMongo.Config{
