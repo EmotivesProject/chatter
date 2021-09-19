@@ -15,6 +15,7 @@ services:
       NOTIFICATION_URL: http://notif/internal_notification
       EMOTIVES_URL: http://localhost/
       NOTIFICATION_AUTH: qutSecret
+      ALLOWED_ORIGINS: http://localhost
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.chatter.rule=Host(`chatter.localhost`)"

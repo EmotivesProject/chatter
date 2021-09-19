@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/TomBowyerResearchProject/common/logger"
+	"github.com/TomBowyerResearchProject/common/middlewares"
 	commonMongo "github.com/TomBowyerResearchProject/common/mongo"
 	"github.com/TomBowyerResearchProject/common/verification"
 )
@@ -23,6 +24,12 @@ func SetUpIntegrationTest() {
 		From:     os.Getenv("EMAIL_FROM"),
 		Password: os.Getenv("EMAIL_PASSWORD"),
 		Level:    os.Getenv("EMAIL_LEVEL"),
+	})
+
+	middlewares.Init(middlewares.Config{
+		AllowedOrigins: "*",
+		AllowedMethods: "GET,POST,OPTIONS,DELETE",
+		AllowedHeaders: "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, X-CSRF-Token",
 	})
 
 	verification.Init(verification.VerificationConfig{
