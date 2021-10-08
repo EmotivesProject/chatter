@@ -1,35 +1,36 @@
 package db
 
 import (
-	"chatter/internal/messages"
 	"chatter/model"
 	"context"
 	"errors"
 
 	"github.com/TomBowyerResearchProject/common/logger"
-	commonMongo "github.com/TomBowyerResearchProject/common/mongo"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-)
-
-const (
-	PageLimit = 20
+	commonPostgres "github.com/TomBowyerResearchProject/common/postgres"
+	"github.com/jackc/pgx/v4"
 )
 
 func FindUser(ctx context.Context, username string) (*model.User, error) {
 	user := model.User{}
-	filter := bson.D{primitive.E{Key: "username", Value: username}}
 
-	db := commonMongo.GetDatabase()
-	usersCollection := db.Collection(UsersCollection)
-	err := usersCollection.FindOne(ctx, filter).Decode(&user)
+	connection := commonPostgres.GetDatabase()
 
-	// Create the user.
-	if errors.Is(err, mongo.ErrNoDocuments) {
+	err := connection.QueryRow(
+		ctx,
+		`SELECT * FROM users
+		WHERE username = $1`,
+		username,
+	).Scan(
+		&user.ID,
+		&user.Username,
+	)
+
+	if errors.Is(err, pgx.ErrNoRows) {
 		userdef, err := CreateUser(ctx, username)
 
 		return userdef, err
+	} else if err != nil {
+		logger.Error(err)
 	}
 
 	return &user, err
@@ -37,52 +38,65 @@ func FindUser(ctx context.Context, username string) (*model.User, error) {
 
 func FindUserNoCreate(ctx context.Context, username string) (*model.User, error) {
 	user := model.User{}
-	filter := bson.D{primitive.E{Key: "username", Value: username}}
 
-	db := commonMongo.GetDatabase()
-	usersCollection := db.Collection(UsersCollection)
-	err := usersCollection.FindOne(ctx, filter).Decode(&user)
+	connection := commonPostgres.GetDatabase()
+
+	err := connection.QueryRow(
+		ctx,
+		`SELECT * FROM users
+		WHERE username = $1`,
+		username,
+	).Scan(
+		&user.ID,
+		&user.Username,
+	)
 
 	return &user, err
 }
 
 func FindToken(ctx context.Context, token string) (*model.Token, error) {
 	tokenObj := model.Token{}
-	filter := bson.D{primitive.E{Key: "token", Value: token}}
 
-	db := commonMongo.GetDatabase()
-	tokenCollection := db.Collection(TokensCollection)
-	err := tokenCollection.FindOne(ctx, filter).Decode(&tokenObj)
+	connection := commonPostgres.GetDatabase()
 
-	// Create the user.
-	if errors.Is(err, mongo.ErrNoDocuments) {
-		return &tokenObj, messages.ErrNoToken
-	}
+	err := connection.QueryRow(
+		ctx,
+		`SELECT * FROM tokens
+		WHERE token = $1`,
+		token,
+	).Scan(
+		&tokenObj.Token,
+		&tokenObj.Username,
+		&tokenObj.Expiration,
+	)
 
 	return &tokenObj, err
 }
 
 func GetAllUsers(ctx context.Context) *[]model.Connection {
-	var userList []model.Connection
+	userList := make([]model.Connection, 0)
 
-	db := commonMongo.GetDatabase()
-	userCollection := db.Collection(UsersCollection)
+	connection := commonPostgres.GetDatabase()
 
-	cursor, err := userCollection.Find(ctx, bson.D{})
-	if errors.Is(err, mongo.ErrNoDocuments) {
+	rows, err := connection.Query(
+		ctx,
+		`SELECT username FROM users`,
+	)
+	if err != nil {
 		return &userList
 	}
 
-	for cursor.Next(ctx) {
-		// Create a value into which the single document can be decoded.
+	for rows.Next() {
 		var connection model.Connection
 
-		err := cursor.Decode(&connection)
+		err := rows.Scan(
+			&connection.Username,
+		)
 		if err != nil {
-			logger.Error(err)
-
 			continue
 		}
+
+		connection.Active = false
 
 		userList = append(userList, connection)
 	}
@@ -91,51 +105,34 @@ func GetAllUsers(ctx context.Context) *[]model.Connection {
 }
 
 func GetMessagesForUsers(ctx context.Context, from, to string, skip int64) *[]model.ChatMessage {
-	var chatList []model.ChatMessage
+	chatList := make([]model.ChatMessage, 0)
 
-	fromQueryfrom := bson.M{"username_from": from}
-	fromQueryTo := bson.M{"username_to": to}
+	connection := commonPostgres.GetDatabase()
 
-	toQueryfrom := bson.M{"username_from": to}
-	toQueryTo := bson.M{"username_to": from}
-
-	query := bson.M{
-		"$and": []bson.M{
-			fromQueryfrom,
-			fromQueryTo,
-		},
-	}
-
-	secondQuery := bson.M{
-		"$and": []bson.M{
-			toQueryfrom,
-			toQueryTo,
-		},
-	}
-
-	full := bson.M{
-		"$or": []bson.M{
-			query,
-			secondQuery,
-		},
-	}
-
-	db := commonMongo.GetDatabase()
-	messageCollection := db.Collection(MessageCollection)
-
-	cursor, err := messageCollection.Find(ctx, full)
-	if errors.Is(err, mongo.ErrNoDocuments) {
+	rows, err := connection.Query(
+		ctx,
+		`SELECT * FROM messages
+		WHERE username_from = $1 AND username_to = $2
+		OR username_to = $1 AND username_from = $2`,
+		from,
+		to,
+	)
+	if err != nil {
 		return &chatList
 	}
 
-	for cursor.Next(ctx) {
-		// Create a value into which the single document can be decoded.
+	for rows.Next() {
 		var chatmessage model.ChatMessage
 
-		err := cursor.Decode(&chatmessage)
+		err := rows.Scan(
+			&chatmessage.ID,
+			&chatmessage.UsernameFrom,
+			&chatmessage.UsernameTo,
+			&chatmessage.Message,
+			&chatmessage.ImagePath,
+			&chatmessage.Created,
+		)
 		if err != nil {
-			logger.Error(err)
-
 			continue
 		}
 

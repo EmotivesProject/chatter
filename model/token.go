@@ -1,7 +1,9 @@
 package model
 
+import "time"
+
 type Token struct {
-	Token      string `bson:"token" json:"token"`
-	Username   string `bson:"username" json:"username"`
-	Expiration int64  `bson:"expires" json:"expires"`
+	Token      string    `json:"token"`
+	Username   string    `json:"username"`
+	Expiration time.Time `json:"expires"`
 }
