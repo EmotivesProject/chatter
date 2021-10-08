@@ -3,7 +3,6 @@ package main
 import (
 	"chatter/internal/api"
 	"chatter/internal/connections"
-	"chatter/internal/db"
 	"context"
 	"errors"
 	"log"
@@ -15,7 +14,7 @@ import (
 
 	"github.com/TomBowyerResearchProject/common/logger"
 	"github.com/TomBowyerResearchProject/common/middlewares"
-	commonMongo "github.com/TomBowyerResearchProject/common/mongo"
+	commonPostgres "github.com/TomBowyerResearchProject/common/postgres"
 	"github.com/TomBowyerResearchProject/common/verification"
 )
 
@@ -48,10 +47,7 @@ func main() {
 			logger.Infof("HTTP server Shutdown: %v", err)
 		}
 
-		monogodb := commonMongo.GetDatabase()
-		if monogodb != nil {
-			_ = monogodb.Client().Disconnect(context.Background())
-		}
+		commonPostgres.CloseDatabase()
 
 		logger.Infof("mongo disconnected")
 		close(idleConnsClosed)
@@ -84,9 +80,8 @@ func initServices() {
 		AllowedHeaders: "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, X-CSRF-Token",
 	})
 
-	err := commonMongo.Connect(commonMongo.Config{
-		URI:    "mongodb://admin:admin@mongo_db:27017",
-		DBName: db.DBName,
+	err := commonPostgres.Connect(commonPostgres.Config{
+		URI: "postgres://tom:tom123@postgres_db:5432/chatter_db",
 	})
 	if err != nil {
 		log.Fatal(err.Error())

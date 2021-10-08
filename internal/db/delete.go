@@ -3,14 +3,17 @@ package db
 import (
 	"context"
 
-	commonMongo "github.com/TomBowyerResearchProject/common/mongo"
-	"gopkg.in/mgo.v2/bson"
+	commonPostgres "github.com/TomBowyerResearchProject/common/postgres"
 )
 
 func DeleteToken(ctx context.Context, token string) error {
-	db := commonMongo.GetDatabase()
-	tokenCollection := db.Collection(TokensCollection)
-	_, err := tokenCollection.DeleteOne(ctx, bson.M{"token": token})
+	connection := commonPostgres.GetDatabase()
+
+	_, err := connection.Exec(
+		ctx,
+		`DELETE FROM tokens WHERE token = $1`,
+		token,
+	)
 
 	return err
 }

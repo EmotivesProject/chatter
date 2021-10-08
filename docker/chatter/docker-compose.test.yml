@@ -26,15 +26,3 @@ services:
       SECRET: qutCreate
     networks:
       default:
-
-  test_mongo:
-    image: mongo:3.6.23-xenial
-    ports:
-      - 27015:27017
-    environment:
-      MONGO_INITDB_DATABASE: chatter-db
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin
-    restart: unless-stopped
-    networks:
-      default:

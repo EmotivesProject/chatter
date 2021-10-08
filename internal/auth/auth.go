@@ -29,12 +29,12 @@ func CreateToken(ctx context.Context, username string, previouslyCalled bool) (m
 	}
 
 	// Create and set items for return statement
-	expiration := time.Now().Add(expiration * time.Minute).Unix()
+	expiration := time.Now().Add(expiration * time.Minute)
 	token.Token = generatedToken
 	token.Expiration = expiration
 	token.Username = username
 
-	_, err = db.CreateToken(ctx, token)
+	err = db.CreateToken(ctx, token)
 	if err != nil {
 		return token, err
 	}

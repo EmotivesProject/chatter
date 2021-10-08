@@ -2,7 +2,6 @@ package test
 
 import (
 	"chatter/internal/api"
-	"chatter/internal/db"
 	"log"
 	"math/rand"
 	"net/http/httptest"
@@ -11,7 +10,7 @@ import (
 
 	"github.com/TomBowyerResearchProject/common/logger"
 	"github.com/TomBowyerResearchProject/common/middlewares"
-	commonMongo "github.com/TomBowyerResearchProject/common/mongo"
+	commonPostgres "github.com/TomBowyerResearchProject/common/postgres"
 	"github.com/TomBowyerResearchProject/common/verification"
 )
 
@@ -36,9 +35,8 @@ func SetUpIntegrationTest() {
 		VerificationURL: "http://0.0.0.0:8082/authorize",
 	})
 
-	err := commonMongo.Connect(commonMongo.Config{
-		URI:    "mongodb://admin:admin@0.0.0.0:27015",
-		DBName: db.DBName,
+	err := commonPostgres.Connect(commonPostgres.Config{
+		URI: "postgres://tom:tom123@localhost:5435/chatter_db",
 	})
 	if err != nil {
 		log.Fatal(err.Error())
