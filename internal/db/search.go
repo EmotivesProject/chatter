@@ -93,7 +93,6 @@ func GetAllUsers(ctx context.Context) *[]model.Connection {
 			&connection.Username,
 		)
 		if err != nil {
-			logger.Error(err)
 			continue
 		}
 
@@ -134,7 +133,6 @@ func GetMessagesForUsers(ctx context.Context, from, to string, skip int64) *[]mo
 			&chatmessage.Created,
 		)
 		if err != nil {
-			logger.Error(err)
 			continue
 		}
 
