@@ -81,7 +81,7 @@ func initServices() {
 	})
 
 	err := commonPostgres.Connect(commonPostgres.Config{
-		URI: "postgres://tom:tom123@postgres_db:5432/chatter_db",
+		URI: "postgres://postgres@postgres_db:5432/chatter_db",
 	})
 	if err != nil {
 		log.Fatal(err.Error())

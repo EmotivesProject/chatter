@@ -12,7 +12,7 @@ services:
       VERIFICATION_URL: http://uacl/authorize
       NOTIFICATION_URL: http://notif/internal_notification
       EMOTIVES_URL: https://www.emotives.net/
-      NOTIFICATION_AUTH: qutSecret
+      NOTIFICATION_AUTH: "${NOTIFICATION_AUTH:?}"
       EMAIL_FROM: emotives.acc@gmail.com
       EMAIL_PASSWORD: "${GMAIL_PASSWORD:-}"
       EMAIL_LEVEL: PROD
