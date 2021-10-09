@@ -32,7 +32,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = db.CreateUser(r.Context(), user.Username)
+	_, err = db.CreateUser(r.Context(), user)
 	if err != nil {
 		logger.Error(err)
 		response.MessageResponseJSON(w, false, http.StatusBadRequest, response.Message{Message: err.Error()})
@@ -45,8 +45,8 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func createTocken(w http.ResponseWriter, r *http.Request) {
-	username, ok := r.Context().Value(verification.UserID).(string)
-	if !ok {
+	user, err := getUsernameAndGroup(r)
+	if err != nil {
 		logger.Error(messages.ErrFailedToType)
 		response.MessageResponseJSON(
 			w,
@@ -58,7 +58,7 @@ func createTocken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := auth.CreateToken(r.Context(), username, false)
+	token, err := auth.CreateToken(r.Context(), user, false)
 	if err != nil {
 		logger.Error(err)
 		response.MessageResponseJSON(w, false, http.StatusUnprocessableEntity, response.Message{Message: err.Error()})
@@ -66,7 +66,7 @@ func createTocken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logger.Infof("Created token for user %s", username)
+	logger.Infof("Created token for user %s", user.Username)
 	response.ResultResponseJSON(w, false, http.StatusCreated, token)
 }
 
@@ -106,7 +106,20 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 func getConnectedUsers(w http.ResponseWriter, r *http.Request) {
-	offline := db.GetAllUsers(r.Context())
+	user, err := getUsernameAndGroup(r)
+	if err != nil {
+		logger.Error(messages.ErrFailedToType)
+		response.MessageResponseJSON(
+			w,
+			false,
+			http.StatusInternalServerError,
+			response.Message{Message: messages.ErrFailedToType.Error()},
+		)
+
+		return
+	}
+
+	offline := db.GetAllUsers(r.Context(), user.UserGroup)
 	cons := connections.FilterOfflineUsers(*offline)
 	response.ResultResponseJSON(w, false, http.StatusOK, cons)
 }
