@@ -71,7 +71,7 @@ func initServices() {
 
 	verification.Init(verification.VerificationConfig{
 		VerificationURL:     os.Getenv("VERIFICATION_URL"),
-		AuthorizationSecret: "chatterSecret",
+		AuthorizationSecret: os.Getenv("NOTIFICATION_AUTH"),
 	})
 
 	middlewares.Init(middlewares.Config{
@@ -81,7 +81,7 @@ func initServices() {
 	})
 
 	err := commonPostgres.Connect(commonPostgres.Config{
-		URI: "postgres://tom:tom123@postgres_db:5432/chatter_db",
+		URI: "postgres://postgres@postgres_db:5432/chatter_db",
 	})
 	if err != nil {
 		log.Fatal(err.Error())
