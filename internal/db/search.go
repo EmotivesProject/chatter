@@ -50,6 +50,7 @@ func FindUserNoCreate(ctx context.Context, username string) (*model.User, error)
 	).Scan(
 		&user.ID,
 		&user.Username,
+		&user.UserGroup,
 	)
 
 	return &user, err
