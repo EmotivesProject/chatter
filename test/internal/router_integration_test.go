@@ -4,6 +4,7 @@ package api_test
 
 import (
 	"chatter/internal/db"
+	"chatter/model"
 	"chatter/test"
 	"context"
 	"fmt"
@@ -38,8 +39,14 @@ func TestRouterMessages(t *testing.T) {
 
 	username2, _ := commonTest.CreateNewUser(t, uaclCreateUserEndpoint)
 
-	db.CreateUser(context.Background(), username)
-	db.CreateUser(context.Background(), username2)
+	db.CreateUser(context.Background(), model.User{
+		Username:  username,
+		UserGroup: "qut",
+	})
+	db.CreateUser(context.Background(), model.User{
+		Username:  username2,
+		UserGroup: "qut",
+	})
 
 	url := fmt.Sprintf("%s/messages?to=%s&from=%s", test.TS.URL, username2, username)
 

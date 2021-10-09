@@ -10,8 +10,8 @@ import (
 	"github.com/jackc/pgx/v4"
 )
 
-func FindUser(ctx context.Context, username string) (*model.User, error) {
-	user := model.User{}
+func FindUser(ctx context.Context, user model.User) (*model.User, error) {
+	foundUser := model.User{}
 
 	connection := commonPostgres.GetDatabase()
 
@@ -19,21 +19,22 @@ func FindUser(ctx context.Context, username string) (*model.User, error) {
 		ctx,
 		`SELECT * FROM users
 		WHERE username = $1`,
-		username,
+		user.Username,
 	).Scan(
-		&user.ID,
-		&user.Username,
+		&foundUser.ID,
+		&foundUser.Username,
+		&foundUser.UserGroup,
 	)
 
 	if errors.Is(err, pgx.ErrNoRows) {
-		userdef, err := CreateUser(ctx, username)
+		userdef, err := CreateUser(ctx, user)
 
 		return userdef, err
 	} else if err != nil {
 		logger.Error(err)
 	}
 
-	return &user, err
+	return &foundUser, err
 }
 
 func FindUserNoCreate(ctx context.Context, username string) (*model.User, error) {
@@ -49,6 +50,7 @@ func FindUserNoCreate(ctx context.Context, username string) (*model.User, error)
 	).Scan(
 		&user.ID,
 		&user.Username,
+		&user.UserGroup,
 	)
 
 	return &user, err
@@ -73,14 +75,16 @@ func FindToken(ctx context.Context, token string) (*model.Token, error) {
 	return &tokenObj, err
 }
 
-func GetAllUsers(ctx context.Context) *[]model.Connection {
+func GetAllUsers(ctx context.Context, userGroup string) *[]model.Connection {
 	userList := make([]model.Connection, 0)
 
 	connection := commonPostgres.GetDatabase()
 
 	rows, err := connection.Query(
 		ctx,
-		`SELECT username FROM users`,
+		`SELECT username FROM users
+		WHERE user_group = $1`,
+		userGroup,
 	)
 	if err != nil {
 		return &userList

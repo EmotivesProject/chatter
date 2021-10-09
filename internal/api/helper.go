@@ -1,8 +1,12 @@
 package api
 
 import (
+	"chatter/internal/messages"
+	"chatter/model"
 	"net/http"
 	"strconv"
+
+	"github.com/TomBowyerResearchProject/common/verification"
 )
 
 const (
@@ -22,4 +26,23 @@ func findSkip(r *http.Request) int64 {
 	}
 
 	return limit
+}
+
+func getUsernameAndGroup(r *http.Request) (model.User, error) {
+	user := model.User{}
+
+	username, ok := r.Context().Value(verification.UserID).(string)
+	if !ok {
+		return user, messages.ErrFailedToType
+	}
+
+	userGroup, ok := r.Context().Value(verification.UserGroup).(string)
+	if !ok {
+		return user, messages.ErrFailedToType
+	}
+
+	user.Username = username
+	user.UserGroup = userGroup
+
+	return user, nil
 }

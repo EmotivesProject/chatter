@@ -15,10 +15,10 @@ const (
 	tokenLength = 20
 )
 
-func CreateToken(ctx context.Context, username string, previouslyCalled bool) (model.Token, error) {
+func CreateToken(ctx context.Context, user model.User, previouslyCalled bool) (model.Token, error) {
 	var token model.Token
 
-	_, err := db.FindUser(ctx, username)
+	_, err := db.FindUser(ctx, user)
 	if err != nil {
 		return token, messages.ErrFailedUsername
 	}
@@ -32,7 +32,7 @@ func CreateToken(ctx context.Context, username string, previouslyCalled bool) (m
 	expiration := time.Now().Add(expiration * time.Minute)
 	token.Token = generatedToken
 	token.Expiration = expiration
-	token.Username = username
+	token.Username = user.Username
 
 	err = db.CreateToken(ctx, token)
 	if err != nil {

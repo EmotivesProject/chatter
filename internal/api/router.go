@@ -28,7 +28,7 @@ func CreateRouter() http.Handler {
 		r.Get("/", getMessages)
 	})
 
-	r.Route("/connections", func(r chi.Router) {
+	r.With(verification.VerifyJTW()).Route("/connections", func(r chi.Router) {
 		r.Get("/", getConnectedUsers)
 	})
 
