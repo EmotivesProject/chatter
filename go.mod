@@ -6,7 +6,7 @@ require (
 	github.com/TomBowyerResearchProject/common/logger v0.0.0-20210911232627-ec84ebf2ae78
 	github.com/TomBowyerResearchProject/common/middlewares v0.0.0-20210919020645-8f129e3e6e37
 	github.com/TomBowyerResearchProject/common/mongo v0.0.0-20210705095908-154760228061 // indirect
-	github.com/TomBowyerResearchProject/common/notification v0.0.0-20210709105607-257260c9085d
+	github.com/TomBowyerResearchProject/common/notification v0.0.0-20211009215921-351832adaad3
 	github.com/TomBowyerResearchProject/common/postgres v0.0.0-20211008105827-20ddb738a853
 	github.com/TomBowyerResearchProject/common/response v0.0.0-20210918225212-3eb04f0c81a1
 	github.com/TomBowyerResearchProject/common/test v0.0.0-20211009215921-351832adaad3
