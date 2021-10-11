@@ -22,6 +22,8 @@ github.com/TomBowyerResearchProject/common/mongo v0.0.0-20210705095908-154760228
 github.com/TomBowyerResearchProject/common/mongo v0.0.0-20210705095908-154760228061/go.mod h1:6OnxIwYLYCS0JAuPK1WFN/nU+GdXT2ci57sG5OILWU4=
 github.com/TomBowyerResearchProject/common/notification v0.0.0-20210709105607-257260c9085d h1:sWDGz4Iw849QJ9q1ldJqA3HR1fUW8hWUgOv+dG2TgXY=
 github.com/TomBowyerResearchProject/common/notification v0.0.0-20210709105607-257260c9085d/go.mod h1:MwzK5wynS2gnRbCIsxdix47ZD1CFW1YLtF9BC7tShXY=
+github.com/TomBowyerResearchProject/common/notification v0.0.0-20211009215921-351832adaad3 h1:YJjDQE8VZ1jDr4eM2NKbaR4VnYEYJyFUa9WPzrfs6Ec=
+github.com/TomBowyerResearchProject/common/notification v0.0.0-20211009215921-351832adaad3/go.mod h1:xPLEm8mekCzDKJym1SJksRl4ZT5y29Gxfz4BcC/gDz8=
 github.com/TomBowyerResearchProject/common/postgres v0.0.0-20211008105827-20ddb738a853 h1:fSKxdekJvObrxSaKdZuFEMFsIMECIm07xiZUSP2Xr+k=
 github.com/TomBowyerResearchProject/common/postgres v0.0.0-20211008105827-20ddb738a853/go.mod h1:QgRatLlYQsaP/vSwQP4ZHNwarjsPvb9eqSX6FibuyIQ=
 github.com/TomBowyerResearchProject/common/response v0.0.0-20210508000653-21ba51f2b2ba/go.mod h1:fib988ehDtUcBwwwNhHWjQSSruMEEMCLb5QZnfyWU84=
@@ -225,6 +227,7 @@ github.com/zenazn/goji v0.9.0/go.mod h1:7S9M489iMyHBNxwZnk9/EHS098H4/F6TATF2mIxt
 go.mongodb.org/mongo-driver v1.5.1/go.mod h1:gRXCHX4Jo7J0IJ1oDQyUxF7jfy19UfxniMS4xxMmUqw=
 go.mongodb.org/mongo-driver v1.5.2 h1:AsxOLoJTgP6YNM0fXWw4OjdluYmWzQYp+lFJL7xu9fU=
 go.mongodb.org/mongo-driver v1.5.2/go.mod h1:gRXCHX4Jo7J0IJ1oDQyUxF7jfy19UfxniMS4xxMmUqw=
+go.mongodb.org/mongo-driver v1.7.1/go.mod h1:Q4oFMbo1+MSNqICAdYMlC/zSTrwCogR4R8NzkI+yfU8=
 go.uber.org/atomic v1.3.2/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
 go.uber.org/atomic v1.4.0/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
 go.uber.org/atomic v1.5.0/go.mod h1:sABNBOSYdrvTF6hTgEIbc7YasKWGhgEQZyfxyTvoXHQ=
