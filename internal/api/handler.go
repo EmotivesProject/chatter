@@ -40,7 +40,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logger.Infof("Created user %s", user.Username)
+	logger.Infof("Created user for chatter %s", user.Username)
 	response.MessageResponseJSON(w, false, http.StatusCreated, response.Message{Message: "Created user"})
 }
 
@@ -121,6 +121,9 @@ func getConnectedUsers(w http.ResponseWriter, r *http.Request) {
 
 	offline := db.GetAllUsers(r.Context(), user.UserGroup)
 	cons := connections.FilterOfflineUsers(*offline)
+
+	logger.Infof("Sending user %s list of users", user.Username)
+
 	response.ResultResponseJSON(w, false, http.StatusOK, cons)
 }
 
@@ -153,5 +156,8 @@ func getMessages(w http.ResponseWriter, r *http.Request) {
 
 	skip := findSkip(r)
 	messages := db.GetMessagesForUsers(r.Context(), from, to, skip)
+
+	logger.Infof("Sending user %s messages talking to user %s", from, to)
+
 	response.ResultResponseJSON(w, false, http.StatusOK, messages)
 }
