@@ -22,7 +22,7 @@ var (
 )
 
 func Add(ws *websocket.Conn, username string) {
-	logger.Infof("Adding %s", username)
+	logger.Infof("Adding %s to websocket connections", username)
 	mapMutex.Lock()
 	connections[ws] = username
 	clients[username] = ws
@@ -36,7 +36,7 @@ func Remove(ws *websocket.Conn) {
 	delete(connections, ws)
 	delete(clients, username)
 	mapMutex.Unlock()
-	logger.Infof("removed %s", username)
+	logger.Infof("removed %s from websocket connections", username)
 	notifyOfConnectionUpdate(username, false)
 }
 
@@ -78,7 +78,7 @@ func HandleMessages() {
 }
 
 func messageClients(msg model.ChatMessage) {
-	logger.Infof("Sending message to clients %s", msg.Message)
+	logger.Infof("Handling message %s from %s to %s", msg.Message, msg.UsernameFrom, msg.UsernameTo)
 
 	send.MessageNotification(msg.UsernameFrom, msg.UsernameTo, msg.Message)
 
@@ -87,13 +87,11 @@ func messageClients(msg model.ChatMessage) {
 	}
 
 	if to := clients[msg.UsernameTo]; to != nil {
-		logger.Infof("Sending message to %s", msg.UsernameTo)
 		messageClient(to, msg)
 	}
 
 	from := clients[msg.UsernameFrom]
 	if from != nil {
-		logger.Infof("Sending message from %s", msg.UsernameFrom)
 		messageClient(from, msg)
 	}
 }
