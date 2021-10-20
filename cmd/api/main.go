@@ -49,7 +49,6 @@ func main() {
 
 		commonPostgres.CloseDatabase()
 
-		logger.Infof("mongo disconnected")
 		close(idleConnsClosed)
 	}()
 
