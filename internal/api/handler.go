@@ -146,12 +146,15 @@ func getMessages(w http.ResponseWriter, r *http.Request) {
 
 	_, err := db.FindUserNoCreate(r.Context(), to)
 	if err != nil {
+		logger.Error(err)
 		response.MessageResponseJSON(
 			w,
 			false,
 			http.StatusUnprocessableEntity,
 			response.Message{Message: messages.WrongResponse},
 		)
+
+		return
 	}
 
 	skip := findSkip(r)

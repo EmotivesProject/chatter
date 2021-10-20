@@ -9,6 +9,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 
 	commonTest "github.com/TomBowyerResearchProject/common/test"
@@ -40,15 +41,15 @@ func TestRouterMessages(t *testing.T) {
 	username2, _ := commonTest.CreateNewUser(t, uaclCreateUserEndpoint)
 
 	db.CreateUser(context.Background(), model.User{
-		Username:  username,
-		UserGroup: "qut",
+		Username:  strings.ToLower(username),
+		UserGroup: "test",
 	})
 	db.CreateUser(context.Background(), model.User{
-		Username:  username2,
-		UserGroup: "qut",
+		Username:  strings.ToLower(username2),
+		UserGroup: "test",
 	})
 
-	url := fmt.Sprintf("%s/messages?to=%s&from=%s", test.TS.URL, username2, username)
+	url := fmt.Sprintf("%s/messages?to=%s&from=%s", test.TS.URL, strings.ToLower(username2), strings.ToLower(username))
 
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Authorization", token)
