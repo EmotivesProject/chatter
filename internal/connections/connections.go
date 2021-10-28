@@ -63,7 +63,7 @@ func notifyOfConnectionUpdate(username string, active bool) {
 	}
 
 	for i, v := range clients {
-		if i != username {
+		if i != username && db.IsSameGroup(username, i) {
 			messageClient(v, connection)
 		}
 	}

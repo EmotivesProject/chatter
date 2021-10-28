@@ -10,6 +10,8 @@ import (
 	"github.com/jackc/pgx/v4"
 )
 
+const NumberExpectedUsers = 2
+
 func FindUser(ctx context.Context, user model.User) (*model.User, error) {
 	foundUser := model.User{}
 
@@ -144,4 +146,42 @@ func GetMessagesForUsers(ctx context.Context, from, to string, skip int64) *[]mo
 	}
 
 	return &chatList
+}
+
+func IsSameGroup(username, connectingUser string) bool {
+	userList := make([]model.User, 0)
+
+	connection := commonPostgres.GetDatabase()
+
+	rows, err := connection.Query(
+		context.TODO(),
+		`SELECT * FROM users
+		WHERE username IN ($1, $2)`,
+		username,
+		connectingUser,
+	)
+	if err != nil {
+		return false
+	}
+
+	for rows.Next() {
+		var user model.User
+
+		err := rows.Scan(
+			&user.ID,
+			&user.Username,
+			&user.UserGroup,
+		)
+		if err != nil {
+			continue
+		}
+
+		userList = append(userList, user)
+	}
+
+	if len(userList) != NumberExpectedUsers {
+		return false
+	}
+
+	return userList[0].UserGroup == userList[1].UserGroup
 }
