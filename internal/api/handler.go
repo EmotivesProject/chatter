@@ -44,7 +44,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 	response.MessageResponseJSON(w, false, http.StatusCreated, response.Message{Message: "Created user"})
 }
 
-func createTocken(w http.ResponseWriter, r *http.Request) {
+func createToken(w http.ResponseWriter, r *http.Request) {
 	user, err := getUsernameAndGroup(r)
 	if err != nil {
 		logger.Error(messages.ErrFailedToType)

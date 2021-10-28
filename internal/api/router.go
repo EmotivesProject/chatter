@@ -21,7 +21,7 @@ func CreateRouter() http.Handler {
 	})
 
 	r.With(verification.VerifyJTW()).Route("/ws_token", func(r chi.Router) {
-		r.Get("/", createTocken)
+		r.Get("/", createToken)
 	})
 
 	r.With(verification.VerifyJTW()).Route("/messages", func(r chi.Router) {
