@@ -33,4 +33,4 @@ GET - /ws - connects a user via websocket, requires a token to connect
 ```
 ## Database design
 Uses a postgres database.
-[See here for latest schema, uses the uacl_db](https://github.com/TomBowyerResearchProject/databases)
+[See here for latest schema, uses the uacl_db](https://github.com/EmotivesProject/databases)

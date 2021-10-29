@@ -4,7 +4,7 @@ import (
 	"chatter/model"
 	"context"
 
-	commonPostgres "github.com/TomBowyerResearchProject/common/postgres"
+	commonPostgres "github.com/EmotivesProject/common/postgres"
 )
 
 func CreateUser(ctx context.Context, user model.User) (*model.User, error) {

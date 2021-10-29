@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/TomBowyerResearchProject/common/verification"
+	"github.com/EmotivesProject/common/verification"
 )
 
 const (

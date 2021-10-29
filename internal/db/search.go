@@ -5,8 +5,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/TomBowyerResearchProject/common/logger"
-	commonPostgres "github.com/TomBowyerResearchProject/common/postgres"
+	"github.com/EmotivesProject/common/logger"
+	commonPostgres "github.com/EmotivesProject/common/postgres"
 	"github.com/jackc/pgx/v4"
 )
 
