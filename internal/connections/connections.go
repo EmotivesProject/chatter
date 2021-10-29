@@ -9,7 +9,7 @@ import (
 	"io"
 	"sync"
 
-	"github.com/TomBowyerResearchProject/common/logger"
+	"github.com/EmotivesProject/common/logger"
 
 	"github.com/gorilla/websocket"
 )

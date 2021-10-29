@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 
-	commonPostgres "github.com/TomBowyerResearchProject/common/postgres"
+	commonPostgres "github.com/EmotivesProject/common/postgres"
 )
 
 func DeleteToken(ctx context.Context, token string) error {
